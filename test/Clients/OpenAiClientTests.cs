@@ -6,8 +6,9 @@ using Json.Schema;
 using Json.Schema.Generation;
 using System.Text.Json.Serialization;
 using System.Reflection;
+using Boundless.OmniAdapter.Tests.Utilities;
 
-namespace Boundless.OmniAdapter.Tests;
+namespace Boundless.OmniAdapter.Tests.Clients;
 
 
 [TestClass]
@@ -59,7 +60,7 @@ public class OpenAiClientTests
       MaxTokens = max_tokens
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -89,7 +90,7 @@ public class OpenAiClientTests
       N = iterrations,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -112,7 +113,7 @@ public class OpenAiClientTests
       Stop = new() { "6" }
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -144,7 +145,7 @@ public class OpenAiClientTests
       PresencePenalty = presence
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -176,7 +177,7 @@ public class OpenAiClientTests
       FrequencyPenalty = frequency
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -213,7 +214,7 @@ public class OpenAiClientTests
       Temperature = temperature,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -247,7 +248,7 @@ public class OpenAiClientTests
       TopP = p,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -274,7 +275,7 @@ public class OpenAiClientTests
       User = user,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -301,7 +302,7 @@ public class OpenAiClientTests
       Seed = 34578349,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -332,7 +333,7 @@ public class OpenAiClientTests
       LogProbs = log,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -349,7 +350,7 @@ public class OpenAiClientTests
 
   public class Args
   {
-    [Required]
+    [System.ComponentModel.DataAnnotations.Required]
     [JsonPropertyName("input")]
     public string Input { get; set; } = string.Empty;
 
@@ -407,10 +408,10 @@ public class OpenAiClientTests
       Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
-      Tools = [ fn1, fn2 ]
+      Tools = [fn1, fn2]
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -420,7 +421,7 @@ public class OpenAiClientTests
     Assert.AreEqual(1, response.FirstChoice.Message.ToolCalls.Count);
     var function = response.FirstChoice.Message.ToolCalls.First().Function;
     Assert.IsNotNull(function);
-    
+
     Console.WriteLine(function.Name);
   }
 
@@ -439,8 +440,8 @@ public class OpenAiClientTests
       MaxTokens = 1000,
     };
 
-    var stream = _client.StreamChatCompletionAsync(request);
-    await foreach(var chunk in stream)
+    var stream = _client.StreamChatAsync(request);
+    await foreach (var chunk in stream)
     {
       Console.Write(chunk.FirstChoice?.Delta?.Content ?? string.Empty);
     }
@@ -463,7 +464,7 @@ public class OpenAiClientTests
       ResponseFormat = ChatResponseFormat.JsonObject
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -487,7 +488,7 @@ public class OpenAiClientTests
       MaxTokens = 10,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.Usage);
@@ -512,7 +513,7 @@ public class OpenAiClientTests
       MaxTokens = 100,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.RateLimits);
@@ -528,5 +529,6 @@ public class OpenAiClientTests
     Console.WriteLine($" Requests: {limits.ResetRequests}");
     Console.WriteLine($" Tokens: {limits.ResetTokens}");
   }
+
 
 }

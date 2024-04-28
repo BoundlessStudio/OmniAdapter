@@ -1,18 +1,18 @@
-﻿using Boundless.OmniAdapter.OpenAi.Models;
+﻿using Boundless.OmniAdapter.Perplexity.Models;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Boundless.OmniAdapter.OpenAi;
+namespace Boundless.OmniAdapter.Perplexity;
 
-public class OpenAiClient : IDisposable
+public class PerplexityClient : IDisposable
 {
   private readonly JsonSerializerOptions serializerOptions;
   private readonly HttpClient httpClient;
 
-  public OpenAiClient(IHttpClientFactory factory, IOptions<OpenAiSettings> options)
+  public PerplexityClient(IHttpClientFactory factory, IOptions<PerplexitySettings> options)
   {
     serializerOptions = new JsonSerializerOptions()
     {
@@ -21,17 +21,12 @@ public class OpenAiClient : IDisposable
       ReferenceHandler = ReferenceHandler.IgnoreCycles,
     };
 
-    var key = options.Value.OpenAiApiKey;
-    var organization = options.Value.OpenAiOrganization;
-    var project = options.Value.OpenAiProject;
+    var key = options.Value.PerplexityApiKey;
 
-    httpClient = factory.CreateClient("OpenAi");
-    httpClient.BaseAddress = new Uri("https://api.openai.com/v1/");
+    httpClient = factory.CreateClient("PerplexityAi");
+    httpClient.BaseAddress = new Uri("https://api.perplexity.ai/");
     httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {key}");
     httpClient.DefaultRequestHeaders.Add("User-Agent", "BoundlessAi");
-    httpClient.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
-    if (organization is not null) httpClient.DefaultRequestHeaders.Add("OpenAI-Organization", organization);
-    if (project is not null) httpClient.DefaultRequestHeaders.Add("OpenAI-Project", project);
   }
 
   /// <summary>

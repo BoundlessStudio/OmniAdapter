@@ -1,14 +1,16 @@
-﻿using Json.Schema;
+﻿using System.Collections.Concurrent;
+using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
-namespace Boundless.OmniAdapter.Anthropic.Models;
+namespace Boundless.OmniAdapter.AzureAi.Models;
 
-public sealed class InputFunction
+public sealed class Function
 {
   private const string NameRegex = "^[a-zA-Z0-9_-]{1,64}$";
 
-  public InputFunction() { }
+  public Function() { }
 
   /// <summary>
   /// Creates a new function description to insert into a chat conversation.
@@ -23,7 +25,7 @@ public sealed class InputFunction
   /// <param name="parameters">
   /// An optional JSON describing the parameters of the function that the model can generate.
   /// </param>
-  public InputFunction(string name, string? description, JsonSchema? parameters)
+  public Function(string name, string description, string parameters)
   {
     if (!System.Text.RegularExpressions.Regex.IsMatch(name, NameRegex))
     {
@@ -32,8 +34,10 @@ public sealed class InputFunction
 
     Name = name;
     Description = description;
-    Parameters = parameters;
+    Parameters = JsonNode.Parse(parameters);
   }
+
+  internal Function(Function other) => CopyFrom(other);
 
   /// <summary>
   /// The name of the function to generate arguments for.<br/>
@@ -51,11 +55,46 @@ public sealed class InputFunction
   [JsonPropertyName("description")]
   public string? Description { get; private set; }
 
+  private string parametersString;
+
+  private JsonNode parameters;
+
   /// <summary>
-  /// 
+  /// The optional parameters of the function.
+  /// Describe the parameters that the model should generate in JSON schema format (json-schema.org).
   /// </summary>
   [JsonInclude]
-  [JsonPropertyName("input_schema")]
-  public JsonSchema? Parameters { get; set; }
+  [JsonPropertyName("parameters")]
+  public JsonNode Parameters
+  {
+    get
+    {
+      if (parameters == null && !string.IsNullOrWhiteSpace(parametersString))
+      {
+        parameters = JsonNode.Parse(parametersString);
+      }
 
+      return parameters;
+    }
+    private set => parameters = value;
+  }
+
+
+  internal void CopyFrom(Function other)
+  {
+    if (!string.IsNullOrWhiteSpace(other.Name))
+    {
+      Name = other.Name;
+    }
+
+    if (!string.IsNullOrWhiteSpace(other.Description))
+    {
+      Description = other.Description;
+    }
+
+    if (other.Parameters != null)
+    {
+      parametersString += other.Parameters.ToString();
+    }
+  }
 }

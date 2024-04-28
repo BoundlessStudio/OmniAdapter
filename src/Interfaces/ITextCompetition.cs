@@ -2,5 +2,5 @@
 
 //public interface ITextCompetition
 //{
-//  Task<TextResponse> GetTextCompletionAsync(TextRequest chatRequest, CancellationToken cancellationToken = default);
+//  Task<TextResponse> GetCompletionAsync(TextRequest chatRequest, CancellationToken cancellationToken = default);
 //}

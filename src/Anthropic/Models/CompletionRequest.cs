@@ -19,7 +19,7 @@ public class CompletionRequest
   /// The messages to generate chat completions for, in the chat format.
   /// </summary>
   [JsonPropertyName("messages")]
-  public List<Message> Messages { get; set; } = new List<Message>();
+  public List<InputMessage> Messages { get; set; } = new List<InputMessage>();
 
   /// <summary>
   /// The maximum number of tokens allowed for the generated answer.
@@ -28,22 +28,21 @@ public class CompletionRequest
   [JsonPropertyName("max_tokens")]
   public int? MaxTokens { get; set; }
 
-  // Move to Meta Object
-  ///// <summary>
-  ///// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
-  ///// </summary>
-  //[JsonPropertyName("user")]
-  //public string? User { get; set; }
+  /// <summary>
+  /// A unique identifier representing your end-user, which can help Anthropic to monitor and detect abuse.
+  /// </summary>
+  [JsonPropertyName("metadata")]
+  public Metadata? Metadata { get; set; }
 
   /// <summary>
   /// Up to 4 sequences where the API will stop generating further tokens.
   /// </summary>
-  [JsonPropertyName("stop")]
+  [JsonPropertyName("stop_sequences")]
   public List<string>? Stop { get; set; }
 
   /// <summary>
   /// Specifies where the results should stream and be returned at one time.
-  /// Do not set this yourself, use the appropriate methods on <see cref="ChatEndpoint"/> instead.<br/>
+  /// Do not set this yourself.<br/>
   /// Defaults to false
   /// </summary>
   [JsonPropertyName("stream")]
@@ -57,14 +56,12 @@ public class CompletionRequest
   public string? SystemPrommpt { get; set; }
 
   /// <summary>
-  /// What sampling temperature to use, between 0 and 2.
-  /// Higher values like 0.8 will make the output more random, while lower values like 0.2 will
-  /// make it more focused and deterministic.
-  /// We generally recommend altering this or top_p but not both.<br/>
-  /// Defaults to 1
+  /// Amount of randomness injected into the response.
+  /// Defaults to 1.0. Ranges from 0.0 to 1.0. Use temperature closer to 0.0 for analytical / multiple choice, and closer to 1.0 for creative and generative tasks.
+  /// Note that even with temperature of 0.0, the results will not be fully deterministic.
   /// </summary>
   [JsonPropertyName("temperature")]
-  [Range(0.1, 1.9)]
+  [Range(0.1, 1.0)]
   public double? Temperature { get; set; }
 
   /// <summary>

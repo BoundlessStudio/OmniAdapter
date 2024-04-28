@@ -3,9 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Boundless.OmniAdapter.Groq.Models;
-
-
+namespace Boundless.OmniAdapter.Perplexity.Models;
 
 public class CompletionRequest
 {
@@ -41,8 +39,8 @@ public class CompletionRequest
   /// By default, the number of tokens the model can return will be (4096 - prompt tokens).
   /// </summary>
   [JsonPropertyName("max_tokens")]
+  [Range(1,4000)]
   public int? MaxTokens { get; set; }
-
 
   /// <summary>
   /// Number between -2.0 and 2.0.
@@ -55,32 +53,6 @@ public class CompletionRequest
   public double? PresencePenalty { get; set; }
 
   /// <summary>
-  /// An object specifying the format that the model must output.
-  /// Setting to <see cref="ChatResponseFormat.Json"/> enables JSON mode,
-  /// which guarantees the message the model generates is valid JSON.
-  /// </summary>
-  /// <remarks>
-  /// Important: When using JSON mode you must still instruct the model to produce JSON yourself via some conversation message,
-  /// for example via your system message. If you don't do this, the model may generate an unending stream of
-  /// whitespace until the generation reaches the token limit, which may take a lot of time and give the appearance
-  /// of a "stuck" request. Also note that the message content may be partial (i.e. cut off) if finish_reason="length",
-  /// which indicates the generation exceeded max_tokens or the conversation exceeded the max context length.
-  /// </remarks>
-  [JsonPropertyName("response_format")]
-  [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-  public ResponseFormat ResponseFormat { get; set; } = new ResponseFormat(ChatResponseFormat.Text);
-
-
-  /// <summary>
-  /// This feature is in Beta. If specified, our system will make a best effort to sample deterministically,
-  /// such that repeated requests with the same seed and parameters should return the same result.
-  /// Determinism is not guaranteed, and you should refer to the system_fingerprint response parameter to
-  /// monitor changes in the backend.
-  /// </summary>
-  [JsonPropertyName("seed")]
-  public int? Seed { get; set; }
-
-  /// <summary>
   /// Specifies where the results should stream and be returned at one time.
   /// Do not set this yourself.<br/>
   /// Defaults to false
@@ -90,12 +62,6 @@ public class CompletionRequest
   public bool? Stream { get; internal set; }
 
   /// <summary>
-  /// Up to 4 sequences where the API will stop generating further tokens.
-  /// </summary>
-  [JsonPropertyName("stop")]
-  public List<string>? Stop { get; set; }
-
-  /// <summary>
   /// What sampling temperature to use, between 0 and 2.
   /// Higher values like 0.8 will make the output more random, while lower values like 0.2 will
   /// make it more focused and deterministic.
@@ -103,7 +69,7 @@ public class CompletionRequest
   /// Defaults to 1
   /// </summary>
   [JsonPropertyName("temperature")]
-  [Range(0.1,1.9)]
+  [Range(0.0,1.9)]
   public double? Temperature { get; set; }
 
   /// <summary>
@@ -117,17 +83,11 @@ public class CompletionRequest
   [Range(0.0,1.0)]
   public double? TopP { get; set; }
 
-
   /// <summary>
-  /// A list of tools the model may call. Currently, only functions are supported as a tool.
-  /// Use this to provide a list of functions the model may generate JSON inputs for.
+  /// 
   /// </summary>
-  [JsonPropertyName("tools")]
-  public IReadOnlyList<InputTool>? Tools { get; set; }
+  [JsonPropertyName("top_k")]
+  [Range(0.0, 1.0)]
+  public double? TopK { get; set; }
 
-  /// <summary>
-  /// A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse.
-  /// </summary>
-  [JsonPropertyName("user")]
-  public string? User { get; set; }
 }

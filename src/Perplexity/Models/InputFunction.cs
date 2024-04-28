@@ -2,7 +2,7 @@
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
-namespace Boundless.OmniAdapter.Anthropic.Models;
+namespace Boundless.OmniAdapter.Perplexity.Models;
 
 public sealed class InputFunction
 {
@@ -55,7 +55,7 @@ public sealed class InputFunction
   /// 
   /// </summary>
   [JsonInclude]
-  [JsonPropertyName("input_schema")]
-  public JsonSchema? Parameters { get; set; }
+  [JsonPropertyName("parameters")]
+  public JsonSchema Parameters { get; set; }
 
 }

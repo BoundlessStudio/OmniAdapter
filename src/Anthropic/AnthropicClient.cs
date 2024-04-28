@@ -42,7 +42,7 @@ public class AnthropicClient
   /// <exception cref="TaskCanceledException"></exception>
   /// <exception cref="UriFormatException"></exception>
   /// <returns><see cref="CompletionResponse"/>.</returns>
-  public async Task<CompletionResponse?> GetChatCompletionAsync(CompletionRequest request, CancellationToken cancellationToken = default)
+  public async Task<CompletionResponse?> GetChatAsync(CompletionRequest request, CancellationToken cancellationToken = default)
   {
     ArgumentNullException.ThrowIfNull(request);
 
@@ -79,7 +79,7 @@ public class AnthropicClient
   /// <exception cref="UriFormatException"></exception>
   /// <param name="cancellationToken">Optional, <see cref="CancellationToken"/>.</param>
   /// <returns><see cref="ChatChuckResponse"/>.</returns>
-  public async IAsyncEnumerable<string> StreamChatCompletionAsync(CompletionRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+  public async IAsyncEnumerable<string> StreamChatAsync(CompletionRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
   {
     ArgumentNullException.ThrowIfNull(request);
 

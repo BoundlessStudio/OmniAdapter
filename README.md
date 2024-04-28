@@ -1,20 +1,28 @@
 # OmniAdapter
 
 ## TODO
+  
+Clients:
+  - Text
+    - Perplexity
+    - Huggingface
+  - Image
+    - OpenAI
+    - MidJourney
+    - Leonardo
+  - Audio
+    - OpenAI
+    - ElevenLabs?
 
-Anthropic - Tool Use
+Interfaces:
+  - Competion
+  - Chat
+  - ChatStream
+  - STT
+  - TTS
+  - Image
 
 Kernel:
   - Tool Calls: Function Binding
   - Finish Reason: Length => Continue
-  
-Clients:
-  - Anthropic
-  - Azure
-  - Huggingface
-  - MidJourney
-  - Leonardo
-  - Audio?
-  
-Polly:
-  - 429 Too Many Requests
+  - Polly: 429 Too Many Requests

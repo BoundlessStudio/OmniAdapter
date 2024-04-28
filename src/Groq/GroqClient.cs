@@ -40,7 +40,7 @@ public class GroqClient : IDisposable
   /// <exception cref="TaskCanceledException"></exception>
   /// <exception cref="UriFormatException"></exception>
   /// <returns><see cref="CompletionResponse"/>.</returns>
-  public async Task<CompletionResponse?> GetChatCompletionAsync(CompletionRequest request, CancellationToken cancellationToken = default)
+  public async Task<CompletionResponse?> GetChatAsync(CompletionRequest request, CancellationToken cancellationToken = default)
   {
     ArgumentNullException.ThrowIfNull(request);
 
@@ -77,7 +77,7 @@ public class GroqClient : IDisposable
   /// <exception cref="UriFormatException"></exception>
   /// <param name="cancellationToken">Optional, <see cref="CancellationToken"/>.</param>
   /// <returns><see cref="ChatChuckResponse"/>.</returns>
-  public async IAsyncEnumerable<CompletionResponse> StreamChatCompletionAsync(CompletionRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+  public async IAsyncEnumerable<CompletionResponse> StreamChatAsync(CompletionRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
   {
     ArgumentNullException.ThrowIfNull(request);
 

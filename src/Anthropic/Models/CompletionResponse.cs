@@ -56,7 +56,8 @@ public class CompletionResponse
   /// This will be:
   /// 'end_turn' if the model reached a natural stopping point,
   /// 'length' if we exceeded the requested max_tokens or the model's maximum,
-  /// 'stop_sequence' one of your provided custom stop_sequences was generated.
+  /// 'stop_sequence' one of your provided custom stop_sequences was generated,
+  /// 'tool_use' a tool should be called and results returned.
   /// </summary>
   [JsonInclude]
   [JsonPropertyName("stop_reason")]

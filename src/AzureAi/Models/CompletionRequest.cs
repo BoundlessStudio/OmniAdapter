@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Boundless.OmniAdapter.OpenAi.Models;
+namespace Boundless.OmniAdapter.AzureAi.Models;
 
 
 

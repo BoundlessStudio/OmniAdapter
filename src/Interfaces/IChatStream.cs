@@ -2,5 +2,5 @@
 
 //public interface IChatStream
 //{
-//  IAsyncEnumerable<ChatChuckResponse> StreamChatCompletionAsync(ChatRequest chatRequest, CancellationToken cancellationToken = default);
+//  IAsyncEnumerable<ChatChuckResponse> StreamChatAsync(ChatRequest chatRequest, CancellationToken cancellationToken = default);
 //}

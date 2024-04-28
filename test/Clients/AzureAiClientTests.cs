@@ -1,19 +1,21 @@
-using Boundless.OmniAdapter.Groq.Models;
-using Boundless.OmniAdapter.Groq;
+using Boundless.OmniAdapter.AzureAi;
+using Boundless.OmniAdapter.AzureAi.Models;
+using Boundless.OmniAdapter.Tests.Utilities;
 using Json.Schema;
 using Json.Schema.Generation;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Moq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
-namespace Boundless.OmniAdapter.Tests;
+namespace Boundless.OmniAdapter.Tests.Clients;
 
 [TestClass]
-public class GroqClientTests
+public class AzureAiClientTests
 {
-  private GroqClient _client;
-  private string defaultModel = "llama3-70b-8192";
+  private AzureAiClient _client;
+  private string defaultModel = "gpt-4-turbo";
 
   [TestInitialize]
   public void Initialize()
@@ -21,13 +23,15 @@ public class GroqClientTests
     var client = new HttpClient();
     var factory = new StaticHttpClientFactory(client);
 
-    var settings = new GroqSettings
+    var settings = new AzureAiSettings
     {
-      GroqApiKey = Environment.GetEnvironmentVariable("GROQ_API_KEY"),
+      AzureAiApiKey = Environment.GetEnvironmentVariable("AZUREAI_API_KEY"),
+      AzureAiEndpoint = Environment.GetEnvironmentVariable("AZUREAI_ENDPOINT"),
+      AzureAiDeployment = Environment.GetEnvironmentVariable("AZUREAI_DEPLOYMENT"),
     };
-    var options = new Mock<IOptions<GroqSettings>>();
+    var options = new Mock<IOptions<AzureAiSettings>>();
     options.Setup(ap => ap.Value).Returns(settings);
-    _client = new GroqClient(factory, options.Object);
+    _client = new AzureAiClient(factory, options.Object);
   }
 
   [TestCleanup]
@@ -56,7 +60,7 @@ public class GroqClientTests
       MaxTokens = max_tokens
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -64,6 +68,33 @@ public class GroqClientTests
     Assert.IsNotNull(content);
 
     Console.WriteLine(content);
+  }
+
+  [TestMethod]
+  [DataRow(1)]
+  [DataRow(3)]
+  [DataRow(5)]
+  [DataRow(10)]
+  public async Task RequestIterrations(int iterrations)
+  {
+    var messages = new List<InputMessage> {
+      new SystemMessage("You are a helpful assistant."),
+      new UserMessage("What model are your using?"),
+    };
+
+    var request = new CompletionRequest
+    {
+      Model = defaultModel,
+      Messages = messages,
+      MaxTokens = 100,
+      N = iterrations,
+    };
+
+    var response = await _client.GetChatAsync(request);
+
+    Assert.IsNotNull(response);
+    Assert.IsNotNull(response.FirstChoice);
+    Assert.AreEqual(iterrations, response.Choices.Count);
   }
 
   [TestMethod]
@@ -82,7 +113,7 @@ public class GroqClientTests
       Stop = new() { "6" }
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -114,7 +145,7 @@ public class GroqClientTests
       PresencePenalty = presence
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -146,7 +177,7 @@ public class GroqClientTests
       FrequencyPenalty = frequency
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -183,7 +214,7 @@ public class GroqClientTests
       Temperature = temperature,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -217,7 +248,7 @@ public class GroqClientTests
       TopP = p,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -244,7 +275,7 @@ public class GroqClientTests
       User = user,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -271,7 +302,7 @@ public class GroqClientTests
       Seed = 34578349,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -279,14 +310,47 @@ public class GroqClientTests
     Assert.IsNotNull(content);
     Console.WriteLine(content);
 
-    var finger_print = "fp_87cbfbbc4d";
+    var finger_print = "fp_2f57f81c11";
     Assert.AreEqual(finger_print, response.SystemFingerprint);
   }
 
 
+  [TestMethod]
+  [DataRow(false)]
+  [DataRow(true)]
+  public async Task RequestProbabilities(bool log)
+  {
+    var messages = new List<InputMessage> {
+      new SystemMessage("You are a helpful assistant."),
+      new UserMessage("What model are your using?"),
+    };
+
+    var request = new CompletionRequest
+    {
+      Model = defaultModel,
+      Messages = messages,
+      MaxTokens = 100,
+      LogProbs = log,
+    };
+
+    var response = await _client.GetChatAsync(request);
+
+    Assert.IsNotNull(response);
+    Assert.IsNotNull(response.FirstChoice);
+
+    if (log)
+    {
+      Assert.IsNotNull(response.FirstChoice.LogProbs);
+    }
+    else
+    {
+      Assert.IsNull(response.FirstChoice.LogProbs);
+    }
+  }
+
   public class Args
   {
-    [Required]
+    [System.ComponentModel.DataAnnotations.Required]
     [JsonPropertyName("input")]
     public string Input { get; set; } = string.Empty;
 
@@ -304,6 +368,19 @@ public class GroqClientTests
   {
     return string.Empty;
   }
+
+  //private Dictionary<string,InputFunction> GetFunctions<T>(T obj) where T : class
+  //{
+  //  var methodInfo = obj.GetType().GetMethods().First();
+
+  //  // var methodInfo = action.Method;
+  //  var attribute = methodInfo.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>();
+  //  var parameters = methodInfo.GetParameters();
+  //  if (parameters.Length > 1) throw new ArgumentOutOfRangeException("parameters");
+  //  var schemas = parameters.Select(p => new JsonSchemaBuilder().FromType(p.ParameterType).Build()).ToList();
+
+  //  return new Dictionary<string, InputFunction>();
+  //}
 
   private InputFunction GetFunction<T>(T action) where T : Delegate
   {
@@ -331,10 +408,10 @@ public class GroqClientTests
       Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
-      Tools = [ fn1, fn2 ]
+      Tools = [fn1, fn2]
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -344,7 +421,7 @@ public class GroqClientTests
     Assert.AreEqual(1, response.FirstChoice.Message.ToolCalls.Count);
     var function = response.FirstChoice.Message.ToolCalls.First().Function;
     Assert.IsNotNull(function);
-    
+
     Console.WriteLine(function.Name);
   }
 
@@ -363,13 +440,12 @@ public class GroqClientTests
       MaxTokens = 1000,
     };
 
-    var stream = _client.StreamChatCompletionAsync(request);
-    await foreach(var chunk in stream)
+    var stream = _client.StreamChatAsync(request);
+    await foreach (var chunk in stream)
     {
       Console.Write(chunk.FirstChoice?.Delta?.Content ?? string.Empty);
     }
   }
-
 
 
   [TestMethod]
@@ -388,7 +464,7 @@ public class GroqClientTests
       ResponseFormat = ChatResponseFormat.JsonObject
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.FirstChoice);
@@ -396,7 +472,6 @@ public class GroqClientTests
     Assert.IsNotNull(content);
     Console.WriteLine(content);
   }
-
 
   [TestMethod]
   public async Task RequestUsage()
@@ -413,13 +488,13 @@ public class GroqClientTests
       MaxTokens = 10,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.Usage);
     Assert.AreEqual(10, response.Usage.CompletionTokens);
-    Assert.AreEqual(27, response.Usage.PromptTokens);
-    Assert.AreEqual(37, response.Usage.TotalTokens);
+    Assert.AreEqual(23, response.Usage.PromptTokens);
+    Assert.AreEqual(33, response.Usage.TotalTokens);
   }
 
 
@@ -438,7 +513,7 @@ public class GroqClientTests
       MaxTokens = 100,
     };
 
-    var response = await _client.GetChatCompletionAsync(request);
+    var response = await _client.GetChatAsync(request);
 
     Assert.IsNotNull(response);
     Assert.IsNotNull(response.RateLimits);
@@ -454,4 +529,108 @@ public class GroqClientTests
     Console.WriteLine($" Requests: {limits.ResetRequests}");
     Console.WriteLine($" Tokens: {limits.ResetTokens}");
   }
+
+  //[DataRow("hate")]
+  //[DataRow("self_harm")]
+  //[DataRow("sexual")]
+  //[DataRow("violence")]
+
+  [TestMethod]
+  public async Task RequestContentFilterHate()
+  {
+    var messages = new List<InputMessage> {
+      new SystemMessage("You are a helpful assistant."),
+      new UserMessage("I hate you, cant you can anything right..."),
+    };
+
+    var request = new CompletionRequest
+    {
+      Model = defaultModel,
+      Messages = messages,
+      MaxTokens = 100,
+    };
+
+    var response = await _client.GetChatAsync(request);
+
+    Assert.IsNotNull(response);
+    Assert.IsNotNull(response.PromptFilterResults);
+    var results = response.PromptFilterResults.FirstOrDefault();
+    Assert.IsNotNull(results);
+    Assert.AreEqual("low", results.ContentFilterResults.Hate.Severity);
+  }
+
+  [TestMethod]
+  public async Task RequestContentFilterHarm()
+  {
+    var messages = new List<InputMessage> {
+      new SystemMessage("You are a helpful assistant."),
+      new UserMessage("Where is best place to cut myself?"),
+    };
+
+    var request = new CompletionRequest
+    {
+      Model = defaultModel,
+      Messages = messages,
+      MaxTokens = 100,
+    };
+
+    var response = await _client.GetChatAsync(request);
+
+    Assert.IsNotNull(response);
+    Assert.IsNotNull(response.PromptFilterResults);
+    var results = response.PromptFilterResults.FirstOrDefault();
+    Assert.IsNotNull(results);
+    Assert.AreEqual("medium", results.ContentFilterResults.SelfHarm.Severity);
+  }
+
+
+  [TestMethod]
+  public async Task RequestContentFilterSexual()
+  {
+    var messages = new List<InputMessage> {
+      new SystemMessage("You are a helpful assistant."),
+      new UserMessage("Draw greek bust of nude man full stans."),
+    };
+
+    var request = new CompletionRequest
+    {
+      Model = defaultModel,
+      Messages = messages,
+      MaxTokens = 100,
+    };
+
+    var response = await _client.GetChatAsync(request);
+
+    Assert.IsNotNull(response);
+    Assert.IsNotNull(response.PromptFilterResults);
+    var results = response.PromptFilterResults.FirstOrDefault();
+    Assert.IsNotNull(results);
+    Assert.AreEqual("low", results.ContentFilterResults.Sexual.Severity);
+  }
+
+  [TestMethod]
+  public async Task RequestContentFilterViolence()
+  {
+    var messages = new List<InputMessage> {
+      new SystemMessage("You are a helpful assistant."),
+      new UserMessage("How dose one make an explosive."),
+    };
+
+    var request = new CompletionRequest
+    {
+      Model = defaultModel,
+      Messages = messages,
+      MaxTokens = 100,
+    };
+
+    var response = await _client.GetChatAsync(request);
+
+    Assert.IsNotNull(response);
+    Assert.IsNotNull(response.PromptFilterResults);
+    var results = response.PromptFilterResults.FirstOrDefault();
+    Assert.IsNotNull(results);
+    Assert.AreEqual("medium", results.ContentFilterResults.Violence.Severity);
+  }
+
+
 }
