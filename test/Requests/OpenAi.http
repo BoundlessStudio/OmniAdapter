@@ -52,6 +52,46 @@ Authorization: Bearer {{$processEnv OPENAI_API_KEY}}
     },
     {
       "role": "user",
+      "content": "create some example json",
+      "name": null
+    }
+  ],
+  "model": "gpt-4-turbo",
+  "frequency_penalty": null,
+  "logit_bias": null,
+  "logprobs": null,
+  "top_logprobs": null,
+  "max_tokens": 100,
+  "n": 1,
+  "presence_penalty": null,
+  "response_format": {
+    "type": "json_object" 
+  },
+  "seed": null,
+  "stream": null,
+  "stop": null,
+  "temperature": null,
+  "top_p": null,
+  "tools":  null,
+  "user": "auth|rgbknights@exmaple.com"
+}
+
+###
+
+POST https://api.openai.com/v1/chat/completions
+Content-Type: application/json
+Accept-Language: en-US,en;q=0.5
+Authorization: Bearer {{$processEnv OPENAI_API_KEY}}
+
+{
+  "messages": [
+     {
+      "role": "system",
+      "content": "You are a helpful assistant.",
+      "name": null
+    },
+    {
+      "role": "user",
       "content": "What model are you using?",
       "name": null
     }
@@ -66,6 +106,96 @@ Authorization: Bearer {{$processEnv OPENAI_API_KEY}}
   "presence_penalty": null,
   "response_format": {
     "type": "text" 
+  },
+  "seed": null,
+  "stream": true,
+  "stop": null,
+  "temperature": null,
+  "top_p": null,
+  "tools":  null,
+  "user": "auth|rgbknights@exmaple.com"
+}
+
+      
+###
+
+POST https://api.openai.com/v1/chat/completions
+Content-Type: application/json
+Accept-Language: en-US,en;q=0.5
+Authorization: Bearer {{$processEnv OPENAI_API_KEY}}
+
+{
+  "messages": [
+     {
+      "role": "system",
+      "content": "You are a helpful assistant.",
+      "name": null
+    },
+    {
+      "role": "user",
+      "content": "What is result of ActionTest?",
+      "name": null
+    }
+  ],
+  "model": "gpt-4-turbo",
+  "frequency_penalty": null,
+  "logit_bias": null,
+  "logprobs": null,
+  "top_logprobs": null,
+  "max_tokens": 4000,
+  "n": 1,
+  "presence_penalty": null,
+  "response_format": {
+    "type": "text" 
+  },
+  "seed": null,
+  "stream": true,
+  "stop": null,
+  "temperature": null,
+  "top_p": null,
+  "tools":[
+      {
+        "type": "function",
+        "function": {
+          "name":"ActionTest",
+          "description": "",
+          "parameters": {"type":"object","properties":{"input":{"type":"string"},"table":{"type":"string"}},"required":["input"]}
+        }
+      }
+  ],
+  "user": "auth|rgbknights@exmaple.com"
+}
+
+###
+  
+POST https://api.openai.com/v1/chat/completions
+Content-Type: application/json
+Accept-Language: en-US,en;q=0.5
+Authorization: Bearer {{$processEnv OPENAI_API_KEY}}
+
+{
+  "messages": [
+     {
+      "role": "system",
+      "content": "You are a helpful assistant.",
+      "name": null
+    },
+    {
+      "role": "user",
+      "content": "create some example json",
+      "name": null
+    }
+  ],
+  "model": "gpt-4-turbo",
+  "frequency_penalty": null,
+  "logit_bias": null,
+  "logprobs": null,
+  "top_logprobs": null,
+  "max_tokens": 100,
+  "n": 1,
+  "presence_penalty": null,
+  "response_format": {
+    "type": "json_object" 
   },
   "seed": null,
   "stream": true,

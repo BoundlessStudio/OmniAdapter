@@ -15,7 +15,6 @@ namespace Boundless.OmniAdapter.Tests.Clients;
 public class AzureAiClientTests
 {
   private AzureAiClient _client;
-  private string defaultModel = "gpt-4-turbo";
 
   [TestInitialize]
   public void Initialize()
@@ -55,7 +54,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = max_tokens
     };
@@ -84,7 +82,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
       N = iterrations,
@@ -107,7 +104,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 1000,
       Stop = new() { "6" }
@@ -139,7 +135,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 1000,
       PresencePenalty = presence
@@ -171,7 +166,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 1000,
       FrequencyPenalty = frequency
@@ -208,7 +202,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 1000,
       Temperature = temperature,
@@ -242,7 +235,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 1000,
       TopP = p,
@@ -269,7 +261,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
       User = user,
@@ -296,7 +287,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
       Seed = 34578349,
@@ -327,7 +317,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
       LogProbs = log,
@@ -405,7 +394,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
       Tools = [fn1, fn2]
@@ -435,7 +423,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 1000,
     };
@@ -458,7 +445,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 1000,
       ResponseFormat = ChatResponseFormat.JsonObject
@@ -483,7 +469,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 10,
     };
@@ -508,7 +493,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
     };
@@ -545,7 +529,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
     };
@@ -569,7 +552,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
     };
@@ -594,7 +576,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
     };
@@ -618,7 +599,6 @@ public class AzureAiClientTests
 
     var request = new CompletionRequest
     {
-      Model = defaultModel,
       Messages = messages,
       MaxTokens = 100,
     };

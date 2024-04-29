@@ -1,23 +1,20 @@
 # OmniAdapter
 
 ## TODO
-  
+
 Clients:
-  - Text
-    - Perplexity
-    - Huggingface
+  - Audio
+    - OpenAI
+    - ElevenLabs?
   - Image
     - OpenAI
     - MidJourney
     - Leonardo
-  - Audio
-    - OpenAI
-    - ElevenLabs?
+
 
 Interfaces:
-  - Competion
-  - Chat
-  - ChatStream
+  - Competion (+Stream)
+  - Chat (+Stream)
   - STT
   - TTS
   - Image

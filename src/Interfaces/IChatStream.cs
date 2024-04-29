@@ -1,6 +1,8 @@
-﻿namespace Boundless.OmniAdapter.Interfaces;
+﻿using Boundless.OmniAdapter.Models;
 
-//public interface IChatStream
-//{
-//  IAsyncEnumerable<ChatChuckResponse> StreamChatAsync(ChatRequest chatRequest, CancellationToken cancellationToken = default);
-//}
+namespace Boundless.OmniAdapter.Interfaces;
+
+public interface IChatStream
+{
+  IAsyncEnumerable<ChunkResponse> StreamChatAsync(ChatRequest chatRequest, CancellationToken cancellationToken = default);
+}
