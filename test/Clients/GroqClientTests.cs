@@ -1,4 +1,3 @@
-using Boundless.OmniAdapter.Groq.Models;
 using Boundless.OmniAdapter.Groq;
 using Json.Schema;
 using Json.Schema.Generation;
