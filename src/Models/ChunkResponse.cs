@@ -20,11 +20,12 @@ public class ChunkResponse
 
   /// <summary>
   /// This will be:
+  /// <see cref="FinishReason.None"/>
   /// <see cref="FinishReason.Stop"/>
   /// <see cref="FinishReason.Length"/>
   /// <see cref="FinishReason.ContentFilter"/>
   /// <see cref="FinishReason.ToolCalls"/>
   /// </summary>
-  public FinishReason? FinishReason { get; set; }
+  public FinishReason FinishReason { get; set; }
 
 }

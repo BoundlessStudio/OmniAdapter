@@ -1,9 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace Boundless.OmniAdapter.Groq;
-
-
-public abstract class InputMessage
+public class InputMessage
 {
   /// <summary>
   /// The <see cref="OpenAI.Role"/> of the author of this message.

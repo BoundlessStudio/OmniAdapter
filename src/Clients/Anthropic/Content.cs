@@ -52,7 +52,7 @@ public class Content
   [JsonInclude]
   [JsonPropertyName("input")]
   [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-  public JsonObject? ToolInput { get; set; }
+  public JsonNode? ToolInput { get; set; }
 
   /// <summary>
   ///  The id of the tool use request this is a result for.

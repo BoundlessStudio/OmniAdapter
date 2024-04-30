@@ -49,7 +49,7 @@ public class CompletionResponse
 
   [JsonInclude]
   [JsonPropertyName("rate_limits")]
-  public RateLimits? RateLimits { get; internal set; }
+  public Models.RateLimits? RateLimits { get; internal set; }
 
 
   [JsonIgnore]

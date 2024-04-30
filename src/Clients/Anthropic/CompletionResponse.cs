@@ -76,7 +76,7 @@ public class CompletionResponse
   /// </summary>
   [JsonInclude]
   [JsonPropertyName("rate_limits")]
-  public RateLimits? RateLimits { get; internal set; }
+  public Models.RateLimits? RateLimits { get; internal set; }
 
 
 }

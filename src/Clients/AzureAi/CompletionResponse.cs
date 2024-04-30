@@ -50,7 +50,7 @@ public class CompletionResponse
 
   [JsonInclude]
   [JsonPropertyName("rate_limits")]
-  public RateLimits? RateLimits { get; internal set; }
+  public Models.RateLimits? RateLimits { get; internal set; }
   
 
   [JsonIgnore]
@@ -74,51 +74,4 @@ public class CompletionResponse
   [JsonPropertyName("prompt_filter_results")]
   public List<PromptFilterResults>? PromptFilterResults { get; internal set; }
 
-
-  internal CompletionResponse(CompletionResponse other) => CopyFrom(other);
-
-  public void CopyFrom(CompletionResponse other)
-  {
-    if (!string.IsNullOrWhiteSpace(other?.Id))
-    {
-      Id = other.Id;
-    }
-
-    if (!string.IsNullOrWhiteSpace(other?.Model))
-    {
-      Model = other.Model;
-    }
-
-    if (other?.Usage != null)
-    {
-      if (Usage == null)
-      {
-        Usage = other.Usage;
-      }
-      else
-      {
-        Usage.CopyFrom(other.Usage);
-      }
-    }
-
-    if (other?.Choices is { Count: > 0 })
-    {
-      choices ??= new List<Choice>();
-
-      foreach (var otherChoice in other.Choices)
-      {
-        if (otherChoice.Index + 1 > choices.Count)
-        {
-          choices.Insert(otherChoice.Index, otherChoice);
-        }
-
-        choices[otherChoice.Index].CopyFrom(otherChoice);
-      }
-    }
-
-    if(other?.PromptFilterResults != null)
-    {
-      PromptFilterResults = other.PromptFilterResults;
-    }
-  }
 }

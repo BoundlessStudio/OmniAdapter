@@ -1,4 +1,4 @@
-﻿namespace Boundless.OmniAdapter;
+﻿namespace Boundless.OmniAdapter.Models;
 
 public class Usage
 {

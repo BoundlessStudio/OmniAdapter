@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace Boundless.OmniAdapter.Anthropic;
 
-public class AnthropicClient
+public partial class AnthropicClient
 {
   private readonly JsonSerializerOptions serializerOptions;
   private readonly HttpClient httpClient;
@@ -30,17 +30,11 @@ public class AnthropicClient
     // httpClient.DefaultRequestHeaders.Add("User-Agent", "BoundlessAi");
   }
 
-  /// <summary>
-  /// Creates a completion for the chat message.
-  /// </summary>
-  /// <param name="chatRequest">The chat request which contains the message content, <see cref="CompletionRequest"/>.</param>
-  /// <param name="cancellationToken">Optional, <see cref="CancellationToken"/>.</param>
-  /// <exception cref="ArgumentNullException"></exception>
-  /// <exception cref="InvalidOperationException"></exception>
-  /// <exception cref="HttpRequestException"></exception>
-  /// <exception cref="TaskCanceledException"></exception>
-  /// <exception cref="UriFormatException"></exception>
-  /// <returns><see cref="CompletionResponse"/>.</returns>
+  public void Dispose()
+  {
+    httpClient.Dispose();
+  }
+
   public async Task<CompletionResponse?> GetChatAsync(CompletionRequest request, CancellationToken cancellationToken = default)
   {
     ArgumentNullException.ThrowIfNull(request);
@@ -53,7 +47,7 @@ public class AnthropicClient
     var result = await response.Content.ReadFromJsonAsync<CompletionResponse>(serializerOptions, cancellationToken);
     if (result is not null)
     {
-      result.RateLimits = new RateLimits
+      result.RateLimits = new Models.RateLimits
       {
         LimitRequests = int.Parse(response.Headers.GetValues("anthropic-ratelimit-requests-limit").FirstOrDefault() ?? "0"),
         LimitTokens = int.Parse(response.Headers.GetValues("anthropic-ratelimit-tokens-limit").FirstOrDefault() ?? "0"),
@@ -67,17 +61,6 @@ public class AnthropicClient
     return result;
   }
 
-  /// <summary>
-  /// Created a completion for the chat message and stream the results as they come in.
-  /// </summary>
-  /// <param name="chatRequest">The chat request which contains the message content.</param>
-  /// <exception cref="ArgumentNullException"></exception>
-  /// <exception cref="InvalidOperationException"></exception>
-  /// <exception cref="HttpRequestException"></exception>
-  /// <exception cref="TaskCanceledException"></exception>
-  /// <exception cref="UriFormatException"></exception>
-  /// <param name="cancellationToken">Optional, <see cref="CancellationToken"/>.</param>
-  /// <returns><see cref="ChatChuckResponse"/>.</returns>
   public async IAsyncEnumerable<string> StreamChatAsync(CompletionRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
   {
     ArgumentNullException.ThrowIfNull(request);
@@ -117,8 +100,5 @@ public class AnthropicClient
     }
   }
 
-  public void Dispose()
-  {
-    httpClient.Dispose();
-  }
+  
 }

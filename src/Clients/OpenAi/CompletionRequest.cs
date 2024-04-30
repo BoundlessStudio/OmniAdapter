@@ -1,4 +1,5 @@
 ﻿
+using Boundless.OmniAdapter.Models;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -169,4 +170,5 @@ public class CompletionRequest
   /// </summary>
   [JsonPropertyName("user")]
   public string? User { get; set; }
+
 }

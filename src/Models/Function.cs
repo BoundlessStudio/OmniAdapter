@@ -1,15 +1,16 @@
 ﻿using Json.Schema;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
-namespace Boundless.OmniAdapter;
+namespace Boundless.OmniAdapter.Models;
 
 public class Function
 {
   private const string NameRegex = "^[a-zA-Z0-9_-]{1,64}$";
 
-  public Function() { }
+  public Function()
+  {
+    this.Name = string.Empty;
+  }
 
   /// <summary>
   /// Creates a new function description to insert into a chat conversation.
@@ -39,12 +40,12 @@ public class Function
   /// Recommended to not begin with a number or a dash.
   /// </summary>
 
-  public string? Name { get; private set; }
+  public string Name { get; set; }
 
   /// <summary>
   /// The optional description of the function.
   /// </summary>
-  public string? Description { get; private set; }
+  public string? Description { get; set; }
 
   /// <summary>
   /// 

@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace Boundless.OmniAdapter.Perplexity;
 
-public class PerplexityClient : IDisposable
+public partial class PerplexityClient : IDisposable
 {
   private readonly JsonSerializerOptions serializerOptions;
   private readonly HttpClient httpClient;
@@ -28,17 +28,11 @@ public class PerplexityClient : IDisposable
     httpClient.DefaultRequestHeaders.Add("User-Agent", "BoundlessAi");
   }
 
-  /// <summary>
-  /// Creates a completion for the chat message.
-  /// </summary>
-  /// <param name="chatRequest">The chat request which contains the message content, <see cref="CompletionRequest"/>.</param>
-  /// <param name="cancellationToken">Optional, <see cref="CancellationToken"/>.</param>
-  /// <exception cref="ArgumentNullException"></exception>
-  /// <exception cref="InvalidOperationException"></exception>
-  /// <exception cref="HttpRequestException"></exception>
-  /// <exception cref="TaskCanceledException"></exception>
-  /// <exception cref="UriFormatException"></exception>
-  /// <returns><see cref="CompletionResponse"/>.</returns>
+  public void Dispose()
+  {
+    httpClient.Dispose();
+  }
+
   public async Task<CompletionResponse?> GetChatAsync(CompletionRequest request, CancellationToken cancellationToken = default)
   {
     ArgumentNullException.ThrowIfNull(request);
@@ -53,17 +47,6 @@ public class PerplexityClient : IDisposable
     return result;
   }
 
-  /// <summary>
-  /// Created a completion for the chat message and stream the results as they come in.
-  /// </summary>
-  /// <param name="chatRequest">The chat request which contains the message content.</param>
-  /// <exception cref="ArgumentNullException"></exception>
-  /// <exception cref="InvalidOperationException"></exception>
-  /// <exception cref="HttpRequestException"></exception>
-  /// <exception cref="TaskCanceledException"></exception>
-  /// <exception cref="UriFormatException"></exception>
-  /// <param name="cancellationToken">Optional, <see cref="CancellationToken"/>.</param>
-  /// <returns><see cref="ChatChuckResponse"/>.</returns>
   public async IAsyncEnumerable<CompletionResponse> StreamChatAsync(CompletionRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
   {
     ArgumentNullException.ThrowIfNull(request);
@@ -102,8 +85,4 @@ public class PerplexityClient : IDisposable
     }
   }
 
-  public void Dispose()
-  {
-    httpClient.Dispose();
-  }
 }

@@ -2,8 +2,9 @@
 
 public enum FinishReason
 {
-  Stop = 0,
+  None = 0,
+  Stop,
   Length,
   ContentFilter,
-  ToolCalls,
+  Tool,
 }

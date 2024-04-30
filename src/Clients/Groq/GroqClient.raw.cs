@@ -4,14 +4,14 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Boundless.OmniAdapter.OpenAi;
+namespace Boundless.OmniAdapter.Groq;
 
-public class OpenAiClient : IDisposable
+public partial class GroqClient : IDisposable
 {
   private readonly JsonSerializerOptions serializerOptions;
   private readonly HttpClient httpClient;
 
-  public OpenAiClient(IHttpClientFactory factory, IOptions<OpenAiSettings> options)
+  public GroqClient(IHttpClientFactory factory, IOptions<GroqSettings> options)
   {
     serializerOptions = new JsonSerializerOptions()
     {
@@ -20,30 +20,19 @@ public class OpenAiClient : IDisposable
       ReferenceHandler = ReferenceHandler.IgnoreCycles,
     };
 
-    var key = options.Value.OpenAiApiKey;
-    var organization = options.Value.OpenAiOrganization;
-    var project = options.Value.OpenAiProject;
+    var key = options.Value.GroqApiKey;
 
-    httpClient = factory.CreateClient("OpenAi");
-    httpClient.BaseAddress = new Uri("https://api.openai.com/v1/");
+    httpClient = factory.CreateClient("Groq");
+    httpClient.BaseAddress = new Uri("https://api.groq.com/openai/v1/");
     httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {key}");
     httpClient.DefaultRequestHeaders.Add("User-Agent", "BoundlessAi");
-    httpClient.DefaultRequestHeaders.Add("OpenAI-Beta", "assistants=v2");
-    if (organization is not null) httpClient.DefaultRequestHeaders.Add("OpenAI-Organization", organization);
-    if (project is not null) httpClient.DefaultRequestHeaders.Add("OpenAI-Project", project);
   }
 
-  /// <summary>
-  /// Creates a completion for the chat message.
-  /// </summary>
-  /// <param name="chatRequest">The chat request which contains the message content, <see cref="CompletionRequest"/>.</param>
-  /// <param name="cancellationToken">Optional, <see cref="CancellationToken"/>.</param>
-  /// <exception cref="ArgumentNullException"></exception>
-  /// <exception cref="InvalidOperationException"></exception>
-  /// <exception cref="HttpRequestException"></exception>
-  /// <exception cref="TaskCanceledException"></exception>
-  /// <exception cref="UriFormatException"></exception>
-  /// <returns><see cref="CompletionResponse"/>.</returns>
+  public void Dispose()
+  {
+    httpClient.Dispose();
+  }
+
   public async Task<CompletionResponse?> GetChatAsync(CompletionRequest request, CancellationToken cancellationToken = default)
   {
     ArgumentNullException.ThrowIfNull(request);
@@ -53,11 +42,10 @@ public class OpenAiClient : IDisposable
     using var content = JsonContent.Create(request, options: serializerOptions);
     using var response = await httpClient.PostAsync("chat/completions", content, cancellationToken);
     response.EnsureSuccessStatusCode();
-
     var result = await response.Content.ReadFromJsonAsync<CompletionResponse>(serializerOptions, cancellationToken);
-    if(result is not null)
+    if (result is not null)
     {
-      result.RateLimits = new RateLimits
+      result.RateLimits = new Models.RateLimits
       {
         LimitRequests = int.Parse(response.Headers.GetValues("x-ratelimit-limit-requests").FirstOrDefault() ?? "0"),
         LimitTokens = int.Parse(response.Headers.GetValues("x-ratelimit-limit-tokens").FirstOrDefault() ?? "0"),
@@ -71,17 +59,6 @@ public class OpenAiClient : IDisposable
     return result;
   }
 
-  /// <summary>
-  /// Created a completion for the chat message and stream the results as they come in.
-  /// </summary>
-  /// <param name="chatRequest">The chat request which contains the message content.</param>
-  /// <exception cref="ArgumentNullException"></exception>
-  /// <exception cref="InvalidOperationException"></exception>
-  /// <exception cref="HttpRequestException"></exception>
-  /// <exception cref="TaskCanceledException"></exception>
-  /// <exception cref="UriFormatException"></exception>
-  /// <param name="cancellationToken">Optional, <see cref="CancellationToken"/>.</param>
-  /// <returns><see cref="ChatChuckResponse"/>.</returns>
   public async IAsyncEnumerable<CompletionResponse> StreamChatAsync(CompletionRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
   {
     ArgumentNullException.ThrowIfNull(request);
@@ -113,15 +90,9 @@ public class OpenAiClient : IDisposable
       if (partial is null)
         continue;
 
-      if (partial.Choices.Count == 0)
-        continue;
-
       yield return partial;
     }
   }
 
-  public void Dispose()
-  {
-    httpClient.Dispose();
-  }
+ 
 }

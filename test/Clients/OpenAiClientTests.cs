@@ -1,4 +1,3 @@
-using Boundless.OmniAdapter.OpenAi.Models;
 using Boundless.OmniAdapter.OpenAi;
 using Microsoft.Extensions.Options;
 using Moq;

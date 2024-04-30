@@ -3,7 +3,7 @@
 namespace Boundless.OmniAdapter.OpenAi;
 
 
-public abstract class InputMessage
+public class InputMessage
 {
   /// <summary>
   /// The <see cref="OpenAI.Role"/> of the author of this message.
