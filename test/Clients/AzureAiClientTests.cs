@@ -1,5 +1,4 @@
 using Boundless.OmniAdapter.AzureAi;
-using Boundless.OmniAdapter.AzureAi.Models;
 using Boundless.OmniAdapter.Tests.Utilities;
 using Json.Schema;
 using Json.Schema.Generation;

@@ -1,5 +1,4 @@
 using Boundless.OmniAdapter.Anthropic;
-using Boundless.OmniAdapter.Anthropic.Models;
 using Boundless.OmniAdapter.Tests.Utilities;
 using Json.Schema;
 using Json.Schema.Generation;
