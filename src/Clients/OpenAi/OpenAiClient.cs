@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Boundless.OmniAdapter.OpenAi.Models;
+using Boundless.OmniAdapter.OpenAi.Models.Image;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -120,7 +122,31 @@ public class OpenAiClient : IDisposable
     }
   }
 
-  public void Dispose()
+    /// <summary>
+    /// Creates list of images using open ai models
+    /// </summary>
+    /// <param name="ImageGenerationRequest">The chat request which contains the message content, <see cref="ImageGenerationRequest"/>.</param>
+    /// <param name="cancellationToken">Optional, <see cref="CancellationToken"/>.</param>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="HttpRequestException"></exception>
+    /// <exception cref="TaskCanceledException"></exception>
+    /// <exception cref="UriFormatException"></exception>
+    /// <returns><see cref="ImageGenerationResponse"/>.</returns>
+    public async Task<ImageGenerationResponse?> GenerateImagesAsync(ImageGenerationRequest request, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        using var content = JsonContent.Create(request, options: serializerOptions);
+        using var response = await httpClient.PostAsync("images/generations", content, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var result = await response.Content.ReadFromJsonAsync<ImageGenerationResponse>(serializerOptions, cancellationToken);
+
+        return result;
+    }
+
+    public void Dispose()
   {
     httpClient.Dispose();
   }

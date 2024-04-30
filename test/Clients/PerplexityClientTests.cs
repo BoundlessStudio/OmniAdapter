@@ -1,5 +1,4 @@
 using Boundless.OmniAdapter.Perplexity;
-using Boundless.OmniAdapter.Perplexity.Models;
 using Boundless.OmniAdapter.Tests.Utilities;
 using Microsoft.Extensions.Options;
 using Moq;
