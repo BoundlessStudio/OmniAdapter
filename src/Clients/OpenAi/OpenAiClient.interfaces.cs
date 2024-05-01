@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Boundless.OmniAdapter.OpenAi;
 
-public partial class OpenAiClient : IChatCompletion, IChatStream
+public partial class OpenAiClient : IChatCompletion, IChatStream, IImageCompletion, IAudioCompletion
 {
   private static Models.Role ConvertRole(Role role)
   {
@@ -138,5 +138,67 @@ public partial class OpenAiClient : IChatCompletion, IChatStream
       };
       yield return chunk;
     }
+  }
+
+  public async Task<Models.ImageResponse?> GetImageAsync(Models.ImageRequest imageRequest, CancellationToken ct = default)
+  {
+    var request = new ImageRequest()
+    {
+      N = imageRequest.N,
+      Model = imageRequest.Model,
+      Prompt = imageRequest.Prompt,
+      Size = imageRequest.Size,
+      //User = imageRequest.User
+    };
+    var dto = await this.GetImageAsync(request, ct);
+    if(dto is null)
+      throw new InvalidOperationException("Failed Image Operation.");
+
+    var reponse = new Models.ImageResponse()
+    {
+      RevisedPrompt = dto.RevisedPrompt,
+      Url = dto.Url,
+    };
+    return reponse;
+  }
+
+  public async Task<Models.SpeechResponse> GetSpeechAsync(Models.SpeechRequest speechRequest, CancellationToken ct = default)
+  {
+    var request = new SpeechRequest()
+    {
+      Input = speechRequest.Input,
+      Voice = speechRequest.Voice,
+      ResponseFormat = speechRequest.ResponseFormat,
+      Model = "tts-1",
+    };
+    var stream = await this.GetSpeechAsync(request, ct);
+    var id = Guid.NewGuid();
+
+    var reponse = new Models.SpeechResponse()
+    {
+      File = stream,
+      FileName = $"{id}.{speechRequest.ResponseFormat}"
+    };
+    return reponse;
+  }
+
+  public async Task<Models.TranscriptionResponse> GetTranscriptionAsync(Models.TranscriptionRequest imageRequest, CancellationToken ct = default)
+  {
+    var request = new TranscriptionRequest()
+    {
+      File = imageRequest.File,
+      FileName = imageRequest.FileName,
+      Language = imageRequest.Language,
+      Prompt = imageRequest.Prompt,
+    };
+    var dto = await this.GetTranscriptionAsync(request, ct);
+    if (dto is null)
+      throw new InvalidOperationException("Failed Transcription Operation.");
+
+    var reponse = new Models.TranscriptionResponse()
+    {
+      Text = dto.Text,
+    };
+    return reponse;
   }
 }

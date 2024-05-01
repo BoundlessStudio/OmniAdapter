@@ -9,7 +9,7 @@ public class TranscriptionResponse
 public class TranscriptionVerboseResponse : TranscriptionResponse
 {
   public string Language { get; set; } = string.Empty;
-   public double Duration { get; set; } = 0.0;
+  public double Duration { get; set; } = 0.0;
   public List<Segment> Segments { get; set; } = new List<Segment>();
 }
 
