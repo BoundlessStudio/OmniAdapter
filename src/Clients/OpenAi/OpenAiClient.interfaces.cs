@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Boundless.OmniAdapter.OpenAi;
 
-public partial class OpenAiClient : IChatCompetition, IChatStream
+public partial class OpenAiClient : IChatCompletion, IChatStream
 {
   private static Models.Role ConvertRole(Role role)
   {
@@ -49,7 +49,8 @@ public partial class OpenAiClient : IChatCompetition, IChatStream
 
   public async Task<ChatResponse> GetChatAsync(ChatRequest chatRequest, CancellationToken ct = default)
   {
-    ArgumentNullException.ThrowIfNull(chatRequest);
+    if (chatRequest is null)
+      throw new ArgumentNullException(nameof(chatRequest));
 
     var request = new CompletionRequest()
     {
@@ -98,7 +99,8 @@ public partial class OpenAiClient : IChatCompetition, IChatStream
 
   public async IAsyncEnumerable<ChunkResponse> StreamChatAsync(ChatRequest chatRequest, [EnumeratorCancellation] CancellationToken ct = default)
   {
-    ArgumentNullException.ThrowIfNull(chatRequest);
+    if (chatRequest is null)
+      throw new ArgumentNullException(nameof(chatRequest));
 
     var request = new CompletionRequest()
     {

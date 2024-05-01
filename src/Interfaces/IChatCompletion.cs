@@ -2,7 +2,7 @@
 
 namespace Boundless.OmniAdapter.Interfaces;
 
-public interface IChatCompetition
+public interface IChatCompletion
 {
   Task<ChatResponse> GetChatAsync(ChatRequest chatRequest, CancellationToken cancellationToken = default);
 }

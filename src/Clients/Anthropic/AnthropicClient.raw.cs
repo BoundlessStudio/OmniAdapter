@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Boundless.OmniAdapter.Models;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -37,7 +38,8 @@ public partial class AnthropicClient
 
   public async Task<CompletionResponse?> GetChatAsync(CompletionRequest request, CancellationToken cancellationToken = default)
   {
-    ArgumentNullException.ThrowIfNull(request);
+    if (request is null)
+      throw new ArgumentNullException(nameof(request));
 
     request.Stream = false;
 
@@ -63,7 +65,8 @@ public partial class AnthropicClient
 
   public async IAsyncEnumerable<string> StreamChatAsync(CompletionRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
   {
-    ArgumentNullException.ThrowIfNull(request);
+    if (request is null)
+      throw new ArgumentNullException(nameof(request));
 
     request.Stream = true;
 

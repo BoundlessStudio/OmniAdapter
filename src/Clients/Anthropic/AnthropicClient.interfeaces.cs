@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Boundless.OmniAdapter.Anthropic;
 
-public partial class AnthropicClient : IChatCompetition, IChatStream
+public partial class AnthropicClient : IChatCompletion, IChatStream
 {
 
   private static Role ConvertRole(Models.Role role)
@@ -38,7 +38,8 @@ public partial class AnthropicClient : IChatCompetition, IChatStream
 
   public async Task<ChatResponse> GetChatAsync(ChatRequest chatRequest, CancellationToken ct = default)
   {
-    ArgumentNullException.ThrowIfNull(chatRequest);
+    if (chatRequest is null)
+      throw new ArgumentNullException(nameof(chatRequest));
 
     if (chatRequest.ResponseFormat == ResponseFormat.JsonObject)
       throw new ValidationException("Json mode is not supported by this provider. Use tools instead.");
@@ -86,7 +87,8 @@ public partial class AnthropicClient : IChatCompetition, IChatStream
 
   public async IAsyncEnumerable<ChunkResponse> StreamChatAsync(ChatRequest chatRequest, [EnumeratorCancellation] CancellationToken ct = default)
   {
-    ArgumentNullException.ThrowIfNull(chatRequest);
+    if (chatRequest is null)
+      throw new ArgumentNullException(nameof(chatRequest));
 
     if (chatRequest.ResponseFormat == ResponseFormat.JsonObject)
       throw new ValidationException("Json mode is not supported by this provider.");

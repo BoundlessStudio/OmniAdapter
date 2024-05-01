@@ -35,7 +35,8 @@ public partial class GroqClient : IDisposable
 
   public async Task<CompletionResponse?> GetChatAsync(CompletionRequest request, CancellationToken cancellationToken = default)
   {
-    ArgumentNullException.ThrowIfNull(request);
+    if (request is null)
+      throw new ArgumentNullException(nameof(request));
 
     request.Stream = false;
 
@@ -61,7 +62,8 @@ public partial class GroqClient : IDisposable
 
   public async IAsyncEnumerable<CompletionResponse> StreamChatAsync(CompletionRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
   {
-    ArgumentNullException.ThrowIfNull(request);
+    if (request is null)
+      throw new ArgumentNullException(nameof(request));
 
     request.Stream = true;
 
