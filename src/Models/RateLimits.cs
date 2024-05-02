@@ -6,6 +6,6 @@ public class RateLimits
   public int LimitTokens { get; set; }
   public int RemainingRequests { get; set; }
   public int RemainingTokens { get; set; }
-  public string? ResetRequests { get; set; }
-  public string? ResetTokens { get; set; }
+  public TimeSpan ResetRequests { get; set; } = TimeSpan.Zero;
+  public TimeSpan ResetTokens { get; set; } = TimeSpan.Zero;
 }

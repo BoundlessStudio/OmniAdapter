@@ -36,6 +36,37 @@ public partial class AnthropicClient
     httpClient.Dispose();
   }
 
+  private static RateLimits ExtractRateLimits(HttpResponseMessage response)
+  {
+    var limits = new Models.RateLimits();
+
+    if(int.TryParse(response.Headers.GetValues("anthropic-ratelimit-requests-limit").FirstOrDefault(), out int limitRequests))
+    {
+      limits.LimitRequests = limitRequests;
+    }
+    if (int.TryParse(response.Headers.GetValues("anthropic-ratelimit-tokens-limit").FirstOrDefault(), out int limitTokens))
+    {
+      limits.LimitTokens = limitTokens;
+    }
+    if (int.TryParse(response.Headers.GetValues("anthropic-ratelimit-requests-remaining").FirstOrDefault(), out int remainingRequests))
+    {
+      limits.RemainingRequests = remainingRequests;
+    }
+    if (int.TryParse(response.Headers.GetValues("anthropic-ratelimit-tokens-remaining").FirstOrDefault(), out int remainingTokens))
+    {
+      limits.RemainingTokens = remainingTokens;
+    }
+    if (DateTimeOffset.TryParse(response.Headers.GetValues("anthropic-ratelimit-requests-reset").FirstOrDefault(), out DateTimeOffset resetRequests))
+    {
+      limits.ResetRequests = resetRequests - DateTimeOffset.UtcNow;
+    }
+    if (DateTimeOffset.TryParse(response.Headers.GetValues("anthropic-ratelimit-tokens-reset").FirstOrDefault(), out DateTimeOffset resetTokens))
+    {
+      limits.ResetTokens = resetTokens - DateTimeOffset.UtcNow;
+    }
+    return limits;
+  }
+
   public async Task<CompletionResponse?> GetChatAsync(CompletionRequest request, CancellationToken cancellationToken = default)
   {
     if (request is null)
@@ -45,23 +76,14 @@ public partial class AnthropicClient
 
     using var content = JsonContent.Create(request, options: serializerOptions);
     using var response = await httpClient.PostAsync("messages", content, cancellationToken);
+    var limits = ExtractRateLimits(response);
     response.EnsureSuccessStatusCode();
     var result = await response.Content.ReadFromJsonAsync<CompletionResponse>(serializerOptions, cancellationToken);
-    if (result is not null)
-    {
-      result.RateLimits = new Models.RateLimits
-      {
-        LimitRequests = int.Parse(response.Headers.GetValues("anthropic-ratelimit-requests-limit").FirstOrDefault() ?? "0"),
-        LimitTokens = int.Parse(response.Headers.GetValues("anthropic-ratelimit-tokens-limit").FirstOrDefault() ?? "0"),
-        RemainingRequests = int.Parse(response.Headers.GetValues("anthropic-ratelimit-requests-remaining").FirstOrDefault() ?? "0"),
-        RemainingTokens = int.Parse(response.Headers.GetValues("anthropic-ratelimit-tokens-remaining").FirstOrDefault() ?? "0"),
-        ResetRequests = response.Headers.GetValues("anthropic-ratelimit-requests-reset").FirstOrDefault(),
-        ResetTokens = response.Headers.GetValues("anthropic-ratelimit-tokens-reset").FirstOrDefault()
-      };
-    }
-
+    if(result is not null) result.RateLimits = limits;
     return result;
   }
+
+  
 
   public async IAsyncEnumerable<string> StreamChatAsync(CompletionRequest request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
   {

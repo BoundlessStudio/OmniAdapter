@@ -2,6 +2,8 @@
 
 ## TODO
 
+merge the Azure ContentFilter into the FinishReason.ContentFilter
+
 Clients:
 - Audio
    - OpenAI - https://platform.openai.com/docs/api-reference/audio

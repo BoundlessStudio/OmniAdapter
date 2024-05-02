@@ -70,7 +70,6 @@ public partial class PerplexityClient : IChatCompletion, IChatStream
         Name = msg.Name,
         Role = ConvertRole(msg.Role),
         ToolCallId = msg.ToolCallId,
-        ToolCalls = msg.ToolCalls
       }).ToList(),
     };
     var dto = await GetChatAsync(request, ct);
@@ -121,7 +120,6 @@ public partial class PerplexityClient : IChatCompletion, IChatStream
         Name = msg.Name,
         Role = ConvertRole(msg.Role),
         ToolCallId = msg.ToolCallId,
-        ToolCalls = msg.ToolCalls
       }).ToList(),
     };
 

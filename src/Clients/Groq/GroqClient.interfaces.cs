@@ -68,7 +68,11 @@ public partial class GroqClient : IChatCompletion, IChatStream
         Name = msg.Name,
         Role = ConvertRole(msg.Role),
         ToolCallId = msg.ToolCallId,
-        ToolCalls = msg.ToolCalls
+        ToolCalls = msg.ToolCalls.Select((_, i) => new Tool() {
+          Id = _.Id,
+          Index = i,
+          Function = new Function() { Name = _.Name, Description = string.Empty, Parameters = _.Parameters }
+        }).ToList()
       }).ToList(),
     };
     var dto = await GetChatAsync(request, ct);
@@ -90,7 +94,7 @@ public partial class GroqClient : IChatCompletion, IChatStream
       Content = message.Content ?? string.Empty,
       FinishReason = FinishReason(choice.FinishReason),
       Role = ConvertRole(message.Role),
-      Tools = message?.ToolCalls?.Select(_ => new Models.Tool(_.Function?.Name, _.Function?.Parameters))?.ToList() ?? new List<Models.Tool>(),
+      Tools = message?.ToolCalls?.Select(_ => new Models.Tool(_.Id, _.Function?.Name, _.Function?.Parameters))?.ToList() ?? new List<Models.Tool>(),
       RateLimits = dto.RateLimits,
       Usage = Usage(dto.Usage)
     };

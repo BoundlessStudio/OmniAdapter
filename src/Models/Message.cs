@@ -19,11 +19,11 @@ public class Message
   /// May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters.
   /// </summary>
   public string? Name { get; set; }
-
+  
   /// <summary>
   /// 
   /// </summary>
-  public List<string>? ToolCalls { get; set; }
+  public List<Tool>? ToolCalls { get; set; }
 
   /// <summary>
   /// 

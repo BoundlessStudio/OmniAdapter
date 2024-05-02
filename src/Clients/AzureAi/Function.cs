@@ -37,8 +37,6 @@ public sealed class Function
     Parameters = JsonNode.Parse(parameters);
   }
 
-  internal Function(Function other) => CopyFrom(other);
-
   /// <summary>
   /// The name of the function to generate arguments for.<br/>
   /// May contain a-z, A-Z, 0-9, and underscores and dashes, with a maximum length of 64 characters.
@@ -46,18 +44,14 @@ public sealed class Function
   /// </summary>
   [JsonInclude]
   [JsonPropertyName("name")]
-  public string? Name { get; private set; }
+  public string? Name { get; set; }
 
   /// <summary>
   /// The optional description of the function.
   /// </summary>
   [JsonInclude]
   [JsonPropertyName("description")]
-  public string? Description { get; private set; }
-
-  private string parametersString;
-
-  private JsonNode parameters;
+  public string? Description { get;  set; }
 
   /// <summary>
   /// The optional parameters of the function.
@@ -65,36 +59,6 @@ public sealed class Function
   /// </summary>
   [JsonInclude]
   [JsonPropertyName("parameters")]
-  public JsonNode Parameters
-  {
-    get
-    {
-      if (parameters == null && !string.IsNullOrWhiteSpace(parametersString))
-      {
-        parameters = JsonNode.Parse(parametersString);
-      }
+  public JsonNode? Parameters { get; set; }
 
-      return parameters;
-    }
-    private set => parameters = value;
-  }
-
-
-  internal void CopyFrom(Function other)
-  {
-    if (!string.IsNullOrWhiteSpace(other.Name))
-    {
-      Name = other.Name;
-    }
-
-    if (!string.IsNullOrWhiteSpace(other.Description))
-    {
-      Description = other.Description;
-    }
-
-    if (other.Parameters != null)
-    {
-      parametersString += other.Parameters.ToString();
-    }
-  }
 }

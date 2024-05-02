@@ -23,21 +23,21 @@ public sealed class Tool
 
     [JsonInclude]
     [JsonPropertyName("id")]
-    public string? Id { get; private set; }
+    public string? Id { get; set; }
 
     [JsonInclude]
     [JsonPropertyName("index")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public int? Index { get; private set; }
+    public int? Index { get; set; }
 
     [JsonInclude]
     [JsonPropertyName("type")]
-    public string? Type { get; private set; }
+    public string? Type { get; set; }
 
     [JsonInclude]
     [JsonPropertyName("function")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public Function? Function { get; private set; }
+    public Function? Function { get;  set; }
 
     internal void CopyFrom(Tool other)
     {

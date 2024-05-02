@@ -69,7 +69,7 @@ public partial class AnthropicClient : IChatCompletion, IChatStream
       throw new InvalidOperationException("Failed Chat Operation.");
 
     var content = dto.Content is null ? string.Empty : dto.Content.Where(_ => _.Type == "text").Select(_ => _.Text).FirstOrDefault();
-    var tools = dto.Content is null ? new List<Tool>() : dto.Content.Where(_ => _.Type == "tool").Select(_ => new Tool(_.ToolName, _.ToolInput)).ToList();
+    var tools = dto.Content is null ? new List<Tool>() : dto.Content.Where(_ => _.Type == "tool").Select(_ => new Tool(_.ToolId, _.ToolName, _.ToolInput)).ToList();
 
     var response = new ChatResponse()
     {

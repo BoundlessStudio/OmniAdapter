@@ -41,6 +41,38 @@ public partial class OpenAiClient : IDisposable
     httpClient.Dispose();
   }
 
+
+  private static RateLimits ExtractRateLimits(HttpResponseMessage response)
+  {
+    var limits = new Models.RateLimits();
+
+    if (int.TryParse(response.Headers.GetValues("x-ratelimit-limit-requests").FirstOrDefault(), out int limitRequests))
+    {
+      limits.LimitRequests = limitRequests;
+    }
+    if (int.TryParse(response.Headers.GetValues("x-ratelimit-limit-tokens").FirstOrDefault(), out int limitTokens))
+    {
+      limits.LimitTokens = limitTokens;
+    }
+    if (int.TryParse(response.Headers.GetValues("x-ratelimit-remaining-requests").FirstOrDefault(), out int remainingRequests))
+    {
+      limits.RemainingRequests = remainingRequests;
+    }
+    if (int.TryParse(response.Headers.GetValues("x-ratelimit-remaining-tokens").FirstOrDefault(), out int remainingTokens))
+    {
+      limits.RemainingTokens = remainingTokens;
+    }
+    if (DateTimeOffset.TryParse(response.Headers.GetValues("x-ratelimit-reset-requests").FirstOrDefault(), out DateTimeOffset resetRequests))
+    {
+      limits.ResetRequests = resetRequests - DateTimeOffset.UtcNow;
+    }
+    if (DateTimeOffset.TryParse(response.Headers.GetValues("x-ratelimit-reset-tokens").FirstOrDefault(), out DateTimeOffset resetTokens))
+    {
+      limits.ResetTokens = resetTokens - DateTimeOffset.UtcNow;
+    }
+    return limits;
+  }
+
   public async Task<CompletionResponse?> GetChatAsync(CompletionRequest request, CancellationToken cancellationToken = default)
   {
     if (request is null)
@@ -50,22 +82,12 @@ public partial class OpenAiClient : IDisposable
 
     using var content = JsonContent.Create(request, options: serializerOptions);
     using var response = await httpClient.PostAsync("chat/completions", content, cancellationToken);
+    var limits = ExtractRateLimits(response);
+
     response.EnsureSuccessStatusCode();
 
     var result = await response.Content.ReadFromJsonAsync<CompletionResponse>(serializerOptions, cancellationToken);
-    if (result is not null)
-    {
-      result.RateLimits = new RateLimits
-      {
-        LimitRequests = int.Parse(response.Headers.GetValues("x-ratelimit-limit-requests").FirstOrDefault() ?? "0"),
-        LimitTokens = int.Parse(response.Headers.GetValues("x-ratelimit-limit-tokens").FirstOrDefault() ?? "0"),
-        RemainingRequests = int.Parse(response.Headers.GetValues("x-ratelimit-remaining-requests").FirstOrDefault() ?? "0"),
-        RemainingTokens = int.Parse(response.Headers.GetValues("x-ratelimit-remaining-tokens").FirstOrDefault() ?? "0"),
-        ResetRequests = response.Headers.GetValues("x-ratelimit-reset-requests").FirstOrDefault(),
-        ResetTokens = response.Headers.GetValues("x-ratelimit-reset-tokens").FirstOrDefault()
-      };
-    }
-
+    if (result is not null) result.RateLimits = limits;
     return result;
   }
 

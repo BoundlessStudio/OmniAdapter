@@ -31,7 +31,8 @@ public  class InputMessage
   [JsonInclude]
   [JsonPropertyName("tool_calls")]
   [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-  public List<string>? ToolCalls { get; set; }
+  public List<Tool>? ToolCalls { get; set; }
+
 
   [JsonInclude]
   [JsonPropertyName("tool_call_id")]
@@ -64,13 +65,6 @@ public class AssistantMessage : InputMessage
   {
     Role = Role.Assistant;
     Content = content;
-    Name = name;
-  }
-
-  public AssistantMessage(List<string> tools, string? name = null)
-  {
-    Role = Role.Assistant;
-    ToolCalls = tools;
     Name = name;
   }
 }
