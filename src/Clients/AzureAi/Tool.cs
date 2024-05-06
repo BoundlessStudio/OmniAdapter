@@ -10,8 +10,6 @@ public sealed class Tool
 
   public Tool() { }
 
-    public Tool(Tool other) => CopyFrom(other);
-
     public Tool(Function function)
     {
         Function = function;
@@ -39,34 +37,5 @@ public sealed class Tool
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public Function? Function { get; set; }
 
-    internal void CopyFrom(Tool other)
-    {
-        if (!string.IsNullOrWhiteSpace(other?.Id))
-        {
-            Id = other.Id;
-        }
-
-        if (other is { Index: not null })
-        {
-            Index = other.Index.Value;
-        }
-
-        if (!string.IsNullOrWhiteSpace(other?.Type))
-        {
-            Type = other.Type;
-        }
-
-        if (other?.Function != null)
-        {
-            if (Function == null)
-            {
-                Function = new Function(other.Function);
-            }
-            else
-            {
-                Function.CopyFrom(other.Function);
-            }
-        }
-    }
 
 }

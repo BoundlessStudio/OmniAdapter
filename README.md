@@ -2,6 +2,7 @@
 
 ## TODO
 
+Move ResiliencePipeline Closer to the Client
 merge the Azure ContentFilter into the FinishReason.ContentFilter
 
 Clients:

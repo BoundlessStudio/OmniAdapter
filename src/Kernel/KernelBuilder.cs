@@ -35,7 +35,7 @@ namespace Boundless.OmniAdapter.Kernel
 
     public IKernel Build()
     {
-      return new Kernel(chatCompletions, audioCompletions, imageCompletions);
+      return new Kernel(chatCompletions);
     }
   }
 }

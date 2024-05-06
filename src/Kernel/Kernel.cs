@@ -16,46 +16,21 @@ namespace Boundless.OmniAdapter.Kernel
   internal class Kernel : IKernel
   {
     private IReadOnlyList<IChatCompletion> chatCompletions;
-    private IReadOnlyList<IAudioCompletion> audioCompletions;
-    private IReadOnlyList<IImageCompletion> imageCompletions;
 
-    private ResiliencePipeline<ChatResponse> pipeline;
+    private ResiliencePipeline pipeline;
 
-    internal Kernel(
-      IReadOnlyList<IChatCompletion> chatCompletions, 
-      IReadOnlyList<IAudioCompletion> audioCompletions, 
-      IReadOnlyList<IImageCompletion> imageCompletions
-    )
+    internal Kernel(IReadOnlyList<IChatCompletion> chatCompletions)
     {
       this.chatCompletions = chatCompletions;
-      this.audioCompletions = audioCompletions;
-      this.imageCompletions = imageCompletions;
 
-      var optionsExtractDelay = new RetryStrategyOptions<ChatResponse>
-      {
-        DelayGenerator = static args =>
-        {
-          if (args.Outcome.Result is ChatResponse responseMessage)
-          {
-            if (responseMessage?.RateLimits?.ResetRequests > TimeSpan.Zero)
-              return new ValueTask<TimeSpan?>(responseMessage.RateLimits.ResetRequests);
-
-            if (responseMessage?.RateLimits?.ResetTokens > TimeSpan.Zero)
-              return new ValueTask<TimeSpan?>(responseMessage.RateLimits.ResetTokens);
-          }
-
-          // Returning null means the retry strategy will use its internal delay for this attempt.
-          return new ValueTask<TimeSpan?>((TimeSpan?)null);
-        }
-      };
-
-      var rateLimiter = new SlidingWindowRateLimiter(new() { PermitLimit = 10000, Window = TimeSpan.FromMinutes(1) });
+      var delay = new RetryStrategyOptions();
+      var limiter = new SlidingWindowRateLimiter(new() { PermitLimit = 100, Window = TimeSpan.FromMinutes(1) });
 
       // Create an instance of builder that exposes various extensions for adding resilience strategies
-      this.pipeline = new ResiliencePipelineBuilder<ChatResponse>()
+      this.pipeline = new ResiliencePipelineBuilder()
         .AddTimeout(TimeSpan.FromSeconds(60))
-        .AddRetry(optionsExtractDelay)
-        .AddRateLimiter(rateLimiter)
+        .AddRetry(delay)
+        .AddRateLimiter(limiter)
         .Build();
     }
 
@@ -87,10 +62,9 @@ namespace Boundless.OmniAdapter.Kernel
         switch (response.FinishReason)
         {
           case FinishReason.Length:
-            // Continue the conversation
             builder.Append(response.Content);
             batch.Add(new Message() { Role = Role.Assistant, Content = response.Content });
-            batch.Add(new Message() { Role = Role.User, Content = "continue" });
+            //batch.Add(new Message() { Role = Role.User, Content = "continue" });
             break;
           case FinishReason.Stop:
             var json = builder.ToString();
@@ -122,7 +96,7 @@ namespace Boundless.OmniAdapter.Kernel
           case FinishReason.Length:
             // Continue the conversation
             batch.Add(new Message() { Role = Role.Assistant, Content = response.Content });
-            batch.Add(new Message() { Role = Role.User, Content = "continue" });
+            //batch.Add(new Message() { Role = Role.User, Content = "continue" });
             break;
           case FinishReason.Tool:
             // Call the tools and resume the conversation
