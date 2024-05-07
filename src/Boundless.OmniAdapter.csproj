@@ -5,6 +5,18 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Authors>RGBKnights</Authors>
+    <Company>Venatio Studios</Company>
+    <Description>a set of clients for different AI providers and interfaces to normalize their behaviors.</Description>
+    <PackageProjectUrl>https://github.com/BoundlessStudio/OmniAdapter</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/BoundlessStudio/OmniAdapter/blob/main/README.md</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>ai;openai;anthropic;groq;leonardo;midjourney;perplexity</PackageTags>
+    <AssemblyVersion>0.0.0.1</AssemblyVersion>
+    <FileVersion>0.0.0.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
