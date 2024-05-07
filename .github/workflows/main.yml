@@ -23,7 +23,7 @@ jobs:
           dotnet-version: '8.0'
       
       - name: Build
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release --framework netstandard2.1
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,7 +42,7 @@ jobs:
           NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }}
 
       - name: Pack
-        run: dotnet pack --configuration Release --output nupkgs
+        run: dotnet pack --configuration Release --framework netstandard2.1 --output nupkgs
 
       - name: Publish
         run: dotnet nuget push "nupkgs/**/*.nupkg" --source https://api.nuget.org/v3/index.json
