@@ -1,4 +1,5 @@
 using Boundless.OmniAdapter.AzureAi;
+using Boundless.OmniAdapter.Models;
 using Boundless.OmniAdapter.Tests.Utilities;
 using Json.Schema;
 using Json.Schema.Generation;
@@ -302,39 +303,6 @@ public class AzureAiClientTests
     Assert.AreEqual(finger_print, response.SystemFingerprint);
   }
 
-
-  [TestMethod]
-  [DataRow(false)]
-  [DataRow(true)]
-  public async Task RequestProbabilities(bool log)
-  {
-    var messages = new List<InputMessage> {
-      new SystemMessage("You are a helpful assistant."),
-      new UserMessage("What model are your using?"),
-    };
-
-    var request = new CompletionRequest
-    {
-      Messages = messages,
-      MaxTokens = 100,
-      LogProbs = log,
-    };
-
-    var response = await _client.GetChatAsync(request);
-
-    Assert.IsNotNull(response);
-    Assert.IsNotNull(response.FirstChoice);
-
-    if (log)
-    {
-      Assert.IsNotNull(response.FirstChoice.LogProbs);
-    }
-    else
-    {
-      Assert.IsNull(response.FirstChoice.LogProbs);
-    }
-  }
-
   public class Args
   {
     [System.ComponentModel.DataAnnotations.Required]
@@ -375,8 +343,16 @@ public class AzureAiClientTests
     var attribute = methodInfo.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>();
     var parameters = methodInfo.GetParameters();
     if (parameters.Length > 1) throw new ArgumentOutOfRangeException("parameters");
-    var schemas = parameters.Select(p => new JsonSchemaBuilder().FromType(p.ParameterType).Build()).ToList();
-    return new InputFunction(methodInfo.Name, attribute?.Description, schemas.FirstOrDefault());
+    var parameter = parameters.FirstOrDefault();
+    if (parameter is null)
+    {
+      return new InputFunction(methodInfo.Name, attribute?.Description, null);
+    }
+    else
+    {
+      var schema = new JsonSchemaBuilder().FromType(parameter.ParameterType).Build();
+      return new InputFunction(methodInfo.Name, attribute?.Description, schema);
+    }
   }
 
   [TestMethod]

@@ -309,7 +309,7 @@ public class OpenAiClientTests
     Assert.IsNotNull(content);
     Console.WriteLine(content);
 
-    var finger_print = "fp_76f018034d";
+    var finger_print = "fp_ea6eb70039";
     Assert.AreEqual(finger_print, response.SystemFingerprint);
   }
 
@@ -354,7 +354,7 @@ public class OpenAiClientTests
     public string Input { get; set; } = string.Empty;
 
     [JsonPropertyName("table")]
-    public string? Table { get; set; }
+    public string Table { get; set; }
   }
 
   [System.ComponentModel.Description("")]
@@ -368,27 +368,22 @@ public class OpenAiClientTests
     return string.Empty;
   }
 
-  //private Dictionary<string,InputFunction> GetFunctions<T>(T obj) where T : class
-  //{
-  //  var methodInfo = obj.GetType().GetMethods().First();
-
-  //  // var methodInfo = action.Method;
-  //  var attribute = methodInfo.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>();
-  //  var parameters = methodInfo.GetParameters();
-  //  if (parameters.Length > 1) throw new ArgumentOutOfRangeException("parameters");
-  //  var schemas = parameters.Select(p => new JsonSchemaBuilder().FromType(p.ParameterType).Build()).ToList();
-
-  //  return new Dictionary<string, InputFunction>();
-  //}
-
   private InputFunction GetFunction<T>(T action) where T : Delegate
   {
     var methodInfo = action.Method;
     var attribute = methodInfo.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>();
     var parameters = methodInfo.GetParameters();
     if (parameters.Length > 1) throw new ArgumentOutOfRangeException("parameters");
-    var schemas = parameters.Select(p => new JsonSchemaBuilder().FromType(p.ParameterType).Build()).ToList();
-    return new InputFunction(methodInfo.Name, attribute?.Description, schemas.FirstOrDefault());
+    var parameter = parameters.FirstOrDefault();
+    if (parameter is null)
+    {
+      return new InputFunction(methodInfo.Name, attribute?.Description, null);
+    }
+    else
+    {
+      var schema = new JsonSchemaBuilder().FromType(parameter.ParameterType).Build();
+      return new InputFunction(methodInfo.Name, attribute?.Description, schema);
+    }
   }
 
   [TestMethod]

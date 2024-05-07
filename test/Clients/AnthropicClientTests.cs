@@ -209,17 +209,25 @@ public class AnthropicClientTests
     {
     }
 
-    private InputFunction GetFunction<T>(T action) where T : Delegate
+  private InputFunction GetFunction<T>(T action) where T : Delegate
+  {
+    var methodInfo = action.Method;
+    var attribute = methodInfo.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>();
+    var parameters = methodInfo.GetParameters();
+    if (parameters.Length > 1) throw new ArgumentOutOfRangeException("parameters");
+    var parameter = parameters.FirstOrDefault();
+    if (parameter is null)
     {
-        var methodInfo = action.Method;
-        var attribute = methodInfo.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>();
-        var parameters = methodInfo.GetParameters();
-        if (parameters.Length > 1) throw new ArgumentOutOfRangeException("parameters");
-        var schemas = parameters.Select(p => new JsonSchemaBuilder().FromType(p.ParameterType).Build()).ToList();
-        return new InputFunction(methodInfo.Name, attribute?.Description, schemas.FirstOrDefault());
+      return new InputFunction(methodInfo.Name, attribute?.Description, null);
     }
+    else
+    {
+      var schema = new JsonSchemaBuilder().FromType(parameter.ParameterType).Build();
+      return new InputFunction(methodInfo.Name, attribute?.Description, schema);
+    }
+  }
 
-    [TestMethod]
+  [TestMethod]
     public async Task RequestTools()
     {
         var messages = new List<InputMessage> {

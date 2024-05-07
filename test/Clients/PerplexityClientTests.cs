@@ -95,9 +95,9 @@ public class PerplexityClientTests
 
   [TestMethod]
   [DataRow(0.1)]
-  [DataRow(1)]
-  [DataRow(2)]
-  public async Task RequestFrequency(int frequency)
+  [DataRow(1.0)]
+  [DataRow(2.0)]
+  public async Task RequestFrequency(double frequency)
   {
     var messages = new List<InputMessage> {
       new SystemMessage("You are a helpful assistant."),
