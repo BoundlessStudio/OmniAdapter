@@ -8,26 +8,11 @@ public class KernelBuilder
   private IChatCompletion? chatCompletion;
   private ChatSettings? chatSetting;
   private List<FunctionBinding> bindings = new List<FunctionBinding>();
-  private IAudioCompletion? audioCompletion;
-  private IImageCompletion? imageCompletion;
 
   public KernelBuilder()
   {
   }
 
-  public KernelBuilder AddClient<C>(C completion) where C : IChatCompletion, IAudioCompletion, IImageCompletion
-  {
-    this.chatCompletion = completion;
-    this.audioCompletion = completion;
-    this.imageCompletion = completion;
-    return this;
-  }
-
-  public KernelBuilder WithChatCompletion(ChatSettings settings)
-  {
-    this.chatSetting = settings;
-    return this;
-  }
   public KernelBuilder WithChatCompletion(IChatCompletion completion, ChatSettings settings)
   {
     this.chatCompletion = completion;
@@ -41,29 +26,6 @@ public class KernelBuilder
     this.bindings.Add(binding);
     return this;
   }
-
-
-  public KernelBuilder WithAudioCompletion(AudioSettings settings)
-  {
-    return this;
-  }
-  public KernelBuilder WithAudioCompletion(IAudioCompletion completion, AudioSettings settings)
-  {
-    this.audioCompletion = completion;
-    return this;
-  }
-
-  public KernelBuilder WithImageCompletion(ImageSettings settings)
-  {
-    return this;
-  }
-  public KernelBuilder WithImageCompletion(IImageCompletion completion, ImageSettings settings)
-  {
-    this.imageCompletion = completion;
-    return this;
-  }
-
-  
 
   public IKernel Build()
   {
