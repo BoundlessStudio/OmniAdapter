@@ -40,13 +40,19 @@ public partial class AzureAiClient : IDisposable
   {
     var limits = new Models.RateLimits();
 
-    if (int.TryParse(response.Headers.GetValues("x-ratelimit-remaining-requests").FirstOrDefault(), out int remainingRequests))
+    if (response.Headers.TryGetValues("x-ratelimit-remaining-requests", out IEnumerable<string> headerRemainingRequests))
     {
-      limits.RemainingRequests = remainingRequests;
+      if (int.TryParse(headerRemainingRequests.FirstOrDefault(), out int remainingRequests))
+      {
+        limits.RemainingRequests = remainingRequests;
+      }
     }
-    if (int.TryParse(response.Headers.GetValues("x-ratelimit-remaining-tokens").FirstOrDefault(), out int remainingTokens))
+    if (response.Headers.TryGetValues("x-ratelimit-remaining-tokens", out IEnumerable<string> headerRemainingTokens))
     {
-      limits.RemainingTokens = remainingTokens;
+      if (int.TryParse(headerRemainingTokens.FirstOrDefault(), out int remainingTokens))
+      {
+        limits.RemainingTokens = remainingTokens;
+      }
     }
     return limits;
   }

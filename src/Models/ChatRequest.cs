@@ -13,7 +13,7 @@ public class ChatRequest
   /// <remarks>
   /// Defaults to 4096
   /// </remarks>
-  public int MaxTokens { get; set; } = 4096;
+  public int? MaxTokens { get; set; }
 
   /// <summary>
   /// What sampling temperature to use, between 0 and 1.
@@ -21,7 +21,7 @@ public class ChatRequest
   /// <remarks>
   /// Defaults to 0.8
   /// </remarks>
-  public double Temperature { get; set; } = 0.8;
+  public double? Temperature { get; set; }
 
   /// <summary>
   /// The name of the model that will complete your prompt.

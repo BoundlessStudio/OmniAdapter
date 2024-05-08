@@ -1,5 +1,4 @@
-﻿using Boundless.OmniAdapter.Anthropic;
-using Boundless.OmniAdapter.Models;
+﻿using Boundless.OmniAdapter.Models;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Json;
@@ -46,29 +45,47 @@ public partial class OpenAiClient : IDisposable
   {
     var limits = new Models.RateLimits();
 
-    if (int.TryParse(response.Headers.GetValues("x-ratelimit-limit-requests").FirstOrDefault(), out int limitRequests))
+    if (response.Headers.TryGetValues("x-ratelimit-limit-requests", out IEnumerable<string> headerLimitRequests))
     {
-      limits.LimitRequests = limitRequests;
+      if (int.TryParse(headerLimitRequests.FirstOrDefault(), out int limitRequests))
+      {
+        limits.LimitRequests = limitRequests;
+      }
     }
-    if (int.TryParse(response.Headers.GetValues("x-ratelimit-limit-tokens").FirstOrDefault(), out int limitTokens))
+    if (response.Headers.TryGetValues("x-ratelimit-limit-tokens", out IEnumerable<string> headerLimitTokens))
     {
-      limits.LimitTokens = limitTokens;
+      if (int.TryParse(headerLimitTokens.FirstOrDefault(), out int limitTokens))
+      {
+        limits.LimitTokens = limitTokens;
+      }
     }
-    if (int.TryParse(response.Headers.GetValues("x-ratelimit-remaining-requests").FirstOrDefault(), out int remainingRequests))
+    if (response.Headers.TryGetValues("x-ratelimit-remaining-requests", out IEnumerable<string> headerRemainingRequests))
     {
-      limits.RemainingRequests = remainingRequests;
+      if (int.TryParse(headerRemainingRequests.FirstOrDefault(), out int remainingRequests))
+      {
+        limits.RemainingRequests = remainingRequests;
+      }
     }
-    if (int.TryParse(response.Headers.GetValues("x-ratelimit-remaining-tokens").FirstOrDefault(), out int remainingTokens))
+    if (response.Headers.TryGetValues("x-ratelimit-remaining-tokens", out IEnumerable<string> headerRemainingTokens))
     {
-      limits.RemainingTokens = remainingTokens;
+      if (int.TryParse(headerRemainingTokens.FirstOrDefault(), out int remainingTokens))
+      {
+        limits.RemainingTokens = remainingTokens;
+      }
     }
-    if (DateTimeOffset.TryParse(response.Headers.GetValues("x-ratelimit-reset-requests").FirstOrDefault(), out DateTimeOffset resetRequests))
+    if (response.Headers.TryGetValues("x-ratelimit-reset-requests", out IEnumerable<string> headerResetRequests))
     {
-      limits.ResetRequests = resetRequests - DateTimeOffset.UtcNow;
+      if (DateTimeOffset.TryParse(headerResetRequests.FirstOrDefault(), out DateTimeOffset resetRequests))
+      {
+        limits.ResetRequests = resetRequests - DateTimeOffset.UtcNow;
+      }
     }
-    if (DateTimeOffset.TryParse(response.Headers.GetValues("x-ratelimit-reset-tokens").FirstOrDefault(), out DateTimeOffset resetTokens))
+    if (response.Headers.TryGetValues("x-ratelimit-reset-tokens", out IEnumerable<string> headerResetTokens))
     {
-      limits.ResetTokens = resetTokens - DateTimeOffset.UtcNow;
+      if (DateTimeOffset.TryParse(headerResetTokens.FirstOrDefault(), out DateTimeOffset resetTokens))
+      {
+        limits.ResetTokens = resetTokens - DateTimeOffset.UtcNow;
+      }
     }
     return limits;
   }

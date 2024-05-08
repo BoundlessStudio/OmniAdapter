@@ -55,7 +55,7 @@ public partial class AnthropicClient : IChatCompletion, IChatStream
       Temperature = chatRequest.Temperature,
       Stream = false,
       Model = chatRequest.Model ?? throw new ArgumentNullException(nameof(ChatRequest.Model)),
-      Tools = chatRequest.Functions.Select(fn => new InputFunction(fn.Name, fn.Description, fn.Parameters)).ToList(),
+      Tools = chatRequest.Functions.Select(fn => new InputFunction(fn.Name, fn.Description, fn.Schema)).ToList(),
       Messages = chatRequest.Messages
         .Where(_ => _.Role != Models.Role.System)
         .Select(msg => new InputMessage()

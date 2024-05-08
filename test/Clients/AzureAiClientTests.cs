@@ -318,41 +318,23 @@ public class AzureAiClientTests
   {
   }
 
-  [System.ComponentModel.Description("")]
-  private string FunctionTest()
-  {
-    return string.Empty;
-  }
-
-  //private Dictionary<string,InputFunction> GetFunctions<T>(T obj) where T : class
-  //{
-  //  var methodInfo = obj.GetType().GetMethods().First();
-
-  //  // var methodInfo = action.Method;
-  //  var attribute = methodInfo.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>();
-  //  var parameters = methodInfo.GetParameters();
-  //  if (parameters.Length > 1) throw new ArgumentOutOfRangeException("parameters");
-  //  var schemas = parameters.Select(p => new JsonSchemaBuilder().FromType(p.ParameterType).Build()).ToList();
-
-  //  return new Dictionary<string, InputFunction>();
-  //}
 
   private InputFunction GetFunction<T>(T action) where T : Delegate
   {
     var methodInfo = action.Method;
-    var attribute = methodInfo.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>();
     var parameters = methodInfo.GetParameters();
-    if (parameters.Length > 1) throw new ArgumentOutOfRangeException("parameters");
-    var parameter = parameters.FirstOrDefault();
-    if (parameter is null)
-    {
-      return new InputFunction(methodInfo.Name, attribute?.Description, null);
-    }
-    else
-    {
-      var schema = new JsonSchemaBuilder().FromType(parameter.ParameterType).Build();
-      return new InputFunction(methodInfo.Name, attribute?.Description, schema);
-    }
+    if (parameters.Length > 1 || parameters.Length == 0)
+      throw new InvalidOperationException("The method you want to register must have a single input paratmter");
+
+    var attribute = methodInfo.GetCustomAttribute<System.ComponentModel.DescriptionAttribute>();
+    if (attribute is null)
+      throw new InvalidOperationException("You must include a [Description] Attribute on the method you want to register.");
+
+    var parameter = parameters.Single();
+    var type = parameter.ParameterType;
+    var schema = new JsonSchemaBuilder().FromType(type).Build();
+    var fn = new InputFunction(methodInfo.Name, attribute.Description, schema);
+    return fn;
   }
 
   [TestMethod]
@@ -364,13 +346,12 @@ public class AzureAiClientTests
     };
 
     var fn1 = GetFunction(ActionTest);
-    var fn2 = GetFunction(FunctionTest);
 
     var request = new CompletionRequest
     {
       Messages = messages,
       MaxTokens = 100,
-      Tools = [fn1, fn2]
+      Tools = [fn1]
     };
 
     var response = await _client.GetChatAsync(request);

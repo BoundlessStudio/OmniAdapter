@@ -66,7 +66,7 @@ public partial class AzureAiClient : IChatCompletion, IChatStream
       Stream = false,
       N = 1,
       ResponseFormat = new ResponseFormat(chatRequest.ResponseFormat == Models.ResponseFormat.JsonObject ? ChatResponseFormat.JsonObject : ChatResponseFormat.Text),
-      Tools = chatRequest.Functions.Select(fn => new InputTool(new InputFunction(fn.Name, fn.Description, fn.Parameters))).ToList(),
+      Tools = chatRequest.Functions.Select(fn => new InputTool(new InputFunction(fn.Name, fn.Description, fn.Schema))).ToList(),
       Messages = chatRequest.Messages.Select(msg => new InputMessage()
       {
         Content = msg.Content,
@@ -123,7 +123,7 @@ public partial class AzureAiClient : IChatCompletion, IChatStream
       Stream = true,
       N = 1,
       ResponseFormat = new ResponseFormat(chatRequest.ResponseFormat == Models.ResponseFormat.JsonObject ? ChatResponseFormat.JsonObject : ChatResponseFormat.Text),
-      Tools = chatRequest.Functions.Select(fn => new InputTool(new InputFunction(fn.Name, fn.Description, fn.Parameters))).ToList(),
+      Tools = chatRequest.Functions.Select(fn => new InputTool(new InputFunction(fn.Name, fn.Description, fn.Schema))).ToList(),
       Messages = chatRequest.Messages.Select(msg => new InputMessage()
       {
         Content = msg.Content,

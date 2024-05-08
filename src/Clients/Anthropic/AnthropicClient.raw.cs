@@ -40,29 +40,47 @@ public partial class AnthropicClient
   {
     var limits = new Models.RateLimits();
 
-    if(int.TryParse(response.Headers.GetValues("anthropic-ratelimit-requests-limit").FirstOrDefault(), out int limitRequests))
+    if(response.Headers.TryGetValues("anthropic-ratelimit-requests-limit", out IEnumerable<string> headerLimitRequests))
     {
-      limits.LimitRequests = limitRequests;
+      if (int.TryParse(headerLimitRequests.FirstOrDefault(), out int limitRequests))
+      {
+        limits.LimitRequests = limitRequests;
+      }
     }
-    if (int.TryParse(response.Headers.GetValues("anthropic-ratelimit-tokens-limit").FirstOrDefault(), out int limitTokens))
+    if (response.Headers.TryGetValues("anthropic-ratelimit-tokens-limit", out IEnumerable<string> headerLimitTokens))
     {
-      limits.LimitTokens = limitTokens;
+      if (int.TryParse(headerLimitTokens.FirstOrDefault(), out int limitTokens))
+      {
+        limits.LimitTokens = limitTokens;
+      }
     }
-    if (int.TryParse(response.Headers.GetValues("anthropic-ratelimit-requests-remaining").FirstOrDefault(), out int remainingRequests))
+    if (response.Headers.TryGetValues("anthropic-ratelimit-requests-remaining", out IEnumerable<string> headerRemainingRequests))
     {
-      limits.RemainingRequests = remainingRequests;
+      if (int.TryParse(headerRemainingRequests.FirstOrDefault(), out int remainingRequests))
+      {
+        limits.RemainingRequests = remainingRequests;
+      }
     }
-    if (int.TryParse(response.Headers.GetValues("anthropic-ratelimit-tokens-remaining").FirstOrDefault(), out int remainingTokens))
+    if (response.Headers.TryGetValues("anthropic-ratelimit-tokens-remaining", out IEnumerable<string> headerRemainingTokens))
     {
-      limits.RemainingTokens = remainingTokens;
+      if (int.TryParse(headerRemainingTokens.FirstOrDefault(), out int remainingTokens))
+      {
+        limits.RemainingTokens = remainingTokens;
+      }
     }
-    if (DateTimeOffset.TryParse(response.Headers.GetValues("anthropic-ratelimit-requests-reset").FirstOrDefault(), out DateTimeOffset resetRequests))
+    if (response.Headers.TryGetValues("anthropic-ratelimit-requests-reset", out IEnumerable<string> headerResetRequests))
     {
-      limits.ResetRequests = resetRequests - DateTimeOffset.UtcNow;
+      if (DateTimeOffset.TryParse(headerResetRequests.FirstOrDefault(), out DateTimeOffset resetRequests))
+      {
+        limits.ResetRequests = resetRequests - DateTimeOffset.UtcNow;
+      }
     }
-    if (DateTimeOffset.TryParse(response.Headers.GetValues("anthropic-ratelimit-tokens-reset").FirstOrDefault(), out DateTimeOffset resetTokens))
+    if (response.Headers.TryGetValues("anthropic-ratelimit-tokens-reset", out IEnumerable<string> headerResetTokens))
     {
-      limits.ResetTokens = resetTokens - DateTimeOffset.UtcNow;
+      if (DateTimeOffset.TryParse(headerResetTokens.FirstOrDefault(), out DateTimeOffset resetTokens))
+      {
+        limits.ResetTokens = resetTokens - DateTimeOffset.UtcNow;
+      }
     }
     return limits;
   }
