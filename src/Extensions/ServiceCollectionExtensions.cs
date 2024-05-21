@@ -1,5 +1,6 @@
 ﻿using Boundless.OmniAdapter.Anthropic;
 using Boundless.OmniAdapter.AzureAi;
+using Boundless.OmniAdapter.Gemini;
 using Boundless.OmniAdapter.Groq;
 using Boundless.OmniAdapter.Interfaces;
 using Boundless.OmniAdapter.OpenAi;
@@ -59,23 +60,12 @@ public static class ServiceCollectionExtensions
     return services.AddHttpClient(key);
   }
 
-  public static void AddKernel(this IServiceCollection services, Action<IServiceProvider, KernelBuilder> fn)
+  public static IHttpClientBuilder AddGeminiClient(this IServiceCollection services)
   {
-    services.AddSingleton<IKernel>(sp =>
-    {
-      var builder = new KernelBuilder();
-      fn(sp, builder);
-      return builder.Build();
-    });
-  }
-
-  public static void AddKernel(this IServiceCollection services, string key, Action<IServiceProvider, KernelBuilder> fn)
-  {
-    services.AddKeyedSingleton<IKernel>(key, (sp, _) =>
-    {
-      var builder = new KernelBuilder();
-      fn(sp, builder);
-      return builder.Build();
-    });
+    const string key = "Gemini";
+    services.AddOptionsWithValidateOnStart<GeminiSettings>().ValidateDataAnnotations();
+    services.AddKeyedSingleton<IChatCompletion, GeminiClient>(key);
+    services.AddSingleton<GeminiClient>();
+    return services.AddHttpClient(key);
   }
 }
