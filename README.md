@@ -6,6 +6,10 @@ Move ResiliencePipeline Closer to the Client
 merge the Azure ContentFilter into the FinishReason.ContentFilter
 
 Clients:
+- Text
+  - Gemini 
+  - AmazonQ
+  - 
 - Audio
    - OpenAI - https://platform.openai.com/docs/api-reference/audio
      - Text To Speech
@@ -29,16 +33,3 @@ Interfaces:
 - Chat (+Stream)
 - Audio (STT/TTS) (+Stream)
 - Image
-
-Kernel:
-- Builder Pattern based on Interfaces and Configuration
-- With Text/Audio/Image/...
-- Tool Calls: Function Binding
-- Function Binding via Registeration?
-- Finish Reason: Length => Continue
-- Polly: 429 Too Many Requests
-
-Generator Project:
-- Function Binding via Attrubute?
-- JsonSchema as Input
-- JsonNode as Output

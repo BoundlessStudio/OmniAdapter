@@ -42,22 +42,21 @@ public partial class AnthropicClient : IChatCompletion, IChatStream
       throw new ArgumentNullException(nameof(chatRequest));
 
     if (chatRequest.ResponseFormat == ResponseFormat.JsonObject)
-      throw new ValidationException("Json mode is not supported by this provider. Use tools instead.");
+      throw new NotSupportedException("Json mode is not supported by this provider. Use tools instead.");
+
+    var instructions = chatRequest.Messages.Where(_ => _.Role == Models.Role.System).ToList();
+    var messages = chatRequest.Messages.Where(_ => _.Role != Models.Role.System).ToList();
 
     var request = new CompletionRequest()
     {
       // Metadata = new Metadata() { UserId = chatRequest.User }
-      SystemPrommpt = chatRequest.Messages
-        .Where(_ => _.Role == Models.Role.System)
-        .Select(_ => _.Content ?? string.Empty)
-        .Aggregate((acc, content) => acc + Environment.NewLine + content),
+      SystemPrommpt = instructions.Select(_ => _.Content ?? string.Empty).Aggregate((acc, content) => acc + Environment.NewLine + content),
       MaxTokens = chatRequest.MaxTokens,
       Temperature = chatRequest.Temperature,
       Stream = false,
       Model = chatRequest.Model ?? throw new ArgumentNullException(nameof(ChatRequest.Model)),
       Tools = chatRequest.Functions.Select(fn => new InputFunction(fn.Name, fn.Description, fn.Schema)).ToList(),
-      Messages = chatRequest.Messages
-        .Where(_ => _.Role != Models.Role.System)
+      Messages = messages
         .Select(msg => new InputMessage()
         {
           Role = ConvertRole(msg.Role),
@@ -68,7 +67,7 @@ public partial class AnthropicClient : IChatCompletion, IChatStream
     if (dto is null)
       throw new InvalidOperationException("Failed Chat Operation.");
 
-    var content = dto.Content is null ? string.Empty : dto.Content.Where(_ => _.Type == "text").Select(_ => _.Text).FirstOrDefault();
+    var content = dto.Content is null ? string.Empty : dto.Content.Where(_ => _.Type == "text").Select(_ => _.Text).LastOrDefault(); // Aggregate?
     var tools = dto.Content is null ? new List<Tool>() : dto.Content.Where(_ => _.Type == "tool").Select(_ => new Tool(_.ToolId, _.ToolName, _.ToolInput)).ToList();
 
     var response = new ChatResponse()
@@ -91,10 +90,7 @@ public partial class AnthropicClient : IChatCompletion, IChatStream
       throw new ArgumentNullException(nameof(chatRequest));
 
     if (chatRequest.ResponseFormat == ResponseFormat.JsonObject)
-      throw new ValidationException("Json mode is not supported by this provider.");
-
-    if (chatRequest.Functions.Count > 0)
-      throw new ValidationException("Functions are not supported by this provider.");
+      throw new NotSupportedException("Json mode is not supported by this provider. Use tools instead.");
 
     var request = new CompletionRequest()
     {

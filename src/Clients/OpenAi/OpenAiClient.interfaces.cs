@@ -15,7 +15,7 @@ public partial class OpenAiClient : IChatCompletion, IChatStream, IImageCompleti
       Role.User => Models.Role.User,
       Role.Assistant => Models.Role.Assistant,
       Role.Tool => Models.Role.Tool,
-      _ => throw new ArgumentException($"Unknown role: {role}"),
+      _ => Models.Role.Unknown,
     };
   }
 

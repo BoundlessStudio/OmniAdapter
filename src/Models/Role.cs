@@ -4,7 +4,8 @@ namespace Boundless.OmniAdapter.Models;
 
 public enum Role
 {
-  System = 1,
+  Unknown = 0,
+  System,
   Assistant,
   User,
   Tool

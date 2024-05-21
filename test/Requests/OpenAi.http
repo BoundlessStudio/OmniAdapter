@@ -149,7 +149,7 @@ Authorization: Bearer {{$processEnv OPENAI_API_KEY}}
     "type": "text" 
   },
   "seed": null,
-  "stream": true,
+  "stream": false,
   "stop": null,
   "temperature": null,
   "top_p": null,

@@ -1,7 +1,4 @@
-﻿
-using Boundless.OmniAdapter.Models;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Boundless.OmniAdapter.OpenAi;
@@ -23,7 +20,7 @@ public class CompletionRequest
   /// Possible values include gpt-4-turbo, gpt-4,gpt-4-32k, gpt-3.5-turbo
   /// </summary>
   [JsonPropertyName("model")]
-  public string Model { get; set; } = string.Empty;
+  public string Model { get; set; } = "gpt-4-turbo";
 
   /// <summary>
   /// Number between -2.0 and 2.0.
