@@ -15,8 +15,8 @@
     <RepositoryUrl>https://github.com/BoundlessStudio/OmniAdapter/blob/main/README.md</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>ai;openai;anthropic;groq;leonardo;midjourney;perplexity</PackageTags>
-    <AssemblyVersion>1.0.3</AssemblyVersion>
-    <FileVersion>1.0.3</FileVersion>
+    <VersionPrefix>1.0.4</VersionPrefix>
+    <VersionSuffix>alpha</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>
