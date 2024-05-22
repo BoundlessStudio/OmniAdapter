@@ -91,6 +91,8 @@ OmniAdapter supports configuration for various AI provider clients. You can conf
 
 ## Usage
 
+### Setup
+
 To use OmniAdapter in your .NET project, follow these steps to set up and configure the various clients and interfaces.
 
 1. **Create a new .NET project** or open an existing one.
@@ -116,14 +118,33 @@ public class Program
 }
 ```
 
+These extention methods will Validate the correct settings are aviable on startup, add a keyed singleton for the client and its implemented interfaces, and a keyed http client.
+
+> :exclamation: Each key is unique to the provider's name.
+
+
+### Functions
+
+There is a build in method within the function class to create a Function object from a .Net Delegate using refelection.
+
+> :rotating_light: The Delegate meet the following condtions:
+> 1. The name is lifted from the method name but must match the regex `^[a-zA-Z0-9_-]{1,64}$`. 
+> 2. The the functions description comes from the [Description] Attribute on the method.
+> 3. must single paramter. That paramter is automaticly converted into a schema for the .Net type useing the JsonSchema.Net. 
+
+```csharp
+Function.CreateFrom<T>(T action) where T : Delegate
+Function.CreateFrom<T>(string name, string description, T action) where T : Delegate
+```
+
+> :new: The [OmniKernel](https://github.com/BoundlessStudio/OmniKernel) is desinged to handle function binding, upon other considerations.
+
 
 ## Dependencies
 A list of dependencies and prerequisites for running OmniAdapter.
 
 **JsonSchema.Net**
 Tools for parsing, generating, and validating JSON Schemas within .NET applications.
-
-:rotating_light: Function parameters require a valid schema.
 
 **System.Net.Http.Json**
 Extension methods for HttpClient and HttpContent that enable automatic serialization and deserialization using System.Text.Json.
@@ -135,6 +156,8 @@ Features for working with HTTP services in a structured way. Integrates with the
 Validates options using data annotations within the options pattern in ASP.NET Core. Supports attributes like [Required], [Range], [StringLength], etc., for validating configuration properties.
 
 ## Resilience
+
+Resilience mechanisms for HttpClient built on the Polly framework via the `Microsoft.Extensions.Http.Resilience` package.
 
 When configuring an HttpClient through the HTTP client factory, the following extensions can add pre-configured hedging or resilience behaviors. These pipelines combine multiple resilience strategies with default settings.
 
