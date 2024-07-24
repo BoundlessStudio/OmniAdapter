@@ -14,9 +14,10 @@
     <PackageProjectUrl>https://github.com/BoundlessStudio/OmniAdapter</PackageProjectUrl>
     <RepositoryUrl>https://github.com/BoundlessStudio/OmniAdapter/blob/main/README.md</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>ai;openai;anthropic;groq;leonardo;midjourney;perplexity</PackageTags>
+    <PackageTags>ai;openai;anthropic;groq;leonardo;perplexity</PackageTags>
     <VersionPrefix>1.0.4</VersionPrefix>
     <VersionSuffix>alpha</VersionSuffix>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
